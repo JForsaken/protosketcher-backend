@@ -1,0 +1,75 @@
+{
+  "name": "roomies-api",
+  "version": "0.1.0",
+  "description": "Photosketcher app RESTful API.",
+  "author": "Justin D'Errico, Jonathan Rainville, Francois Lauzier, Gabriel Latendresse",
+  "homepage": "https://github.com/jforsaken/photosketcher-backend.git",
+  "main": "app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jforsaken/photosketcher-backend.git"
+  },
+  "keywords": [
+    "express",
+    "node"
+  ],
+  "scripts": {
+    "lint": "eslint app",
+    "dev": "npm run preflight && nodemon -w app --exec \"npm run lint && babel-node app --presets es2015,stage-0\"",
+    "build": "npm run preflight && babel app -s -D -d dist --presets es2015,stage-0",
+    "start": "node dist",
+    "preflight": "rm -rf node_modules && yarn install --no-lockfile"
+  },
+  "eslintConfig": {
+    "extends": "airbnb-base",
+    "parserOptions": {
+      "ecmaVersion": 7,
+      "sourceType": "module"
+    },
+    "env": {
+      "node": true
+    },
+    "rules": {
+      "no-underscore-dangle": [
+        "error",
+        {
+          "allow": [
+            "_id",
+            "_doc"
+          ]
+        }
+      ]
+    }
+  },
+  "engines": {
+    "node": ">=6"
+  },
+  "pre-commit": [
+    "lint"
+  ],
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.15.2",
+    "cors": "^2.8.1",
+    "dotenv": "^2.0.0",
+    "express": "^4.14.0",
+    "json-loader": "^0.5.4",
+    "jsonwebtoken": "^7.2.1",
+    "mongodb": "^2.2.19",
+    "mongoose": "^4.7.6",
+    "morgan": "^1.7.0",
+    "pre-commit": "^1.2.2",
+    "ramda": "^0.22.1",
+    "yarn": "^0.18.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.9.0",
+    "babel-core": "^6.9.0",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "eslint": "^3.12.2",
+    "eslint-config-airbnb-base": "^11.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "nodemon": "^1.9.2"
+  }
+}
