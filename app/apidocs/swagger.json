@@ -1,0 +1,135 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "API"
+  },
+  "host": "localhost:5000",
+  "basePath": "/api/v1",
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/authenticate": {
+        "post": {
+            "tags": ["users"],
+            "summary": "Get authentification token",
+            "description": "Get authentification token",
+            "security": [
+                {
+                    "token": []
+                }
+            ],
+            "parameters": [
+              {
+                "in": "body",
+                "name": "body",
+                "description": "User credentials",
+                "required": true,
+                "schema": {
+                  "$ref": "#/definitions/Credentials"
+                }
+              }
+            ]
+        }
+    },
+    "/users": {
+      "post": {
+        "tags": ["users"],
+        "summary": "Create user",
+        "description": "Create a new user",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created user object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ]
+      },
+      "get": {
+        "tags": ["users"],
+        "summary": "List users",
+        "description": "Get all users matching parameters",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Email of the user",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum users returned",
+            "required": false,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+      "token": {
+        "type": "apiKey",
+        "name": "x-access-token",
+        "in": "header"
+      }
+    },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "required": [
+        "firstname",
+        "lastname",
+        "username",
+        "password",
+        "age"
+      ],
+      "properties": {
+        "firstname": {
+          "type": "string"
+        },
+        "lastname": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string",
+          "description": "email"
+        },
+        "password": {
+          "type": "string"
+        },
+        "age": {
+          "type": "integer"
+        }
+      }
+    },
+    "Credentials": {
+      "type": "object",
+      "required": [
+        "username",
+        "password"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "email"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
