@@ -4,12 +4,13 @@ A RESTful backend API assisting the prototype sketching app known as Photosketch
 
 ## Installation
 
-1. Clone repo :family_man_boy: if you are a collaborator, if not, click on that fork repo button :fork_and_knife:! 
+1. Clone repo :family_man_boy: if you are a collaborator, if not, click on that fork repo button :fork_and_knife:!
 2. Install NodeJS using NVM.
 3. Install Mongodb.
 4. Copy the content of the **.env.sample** file to a new file named **.env** then customize it to your needs, which will be your personal environment file.
-4. Navigate to the project, then run `npm run dev`.
-5. The server will now be running at [localhost:5000](http://localhost:500).
+5. Install yarn globally : `npm install yarn -g`
+6. Navigate to the project, then run `npm run dev`.
+7. The server will now be running at [localhost:5000](http://localhost:500).
 
 ### NodeJS installation
 
@@ -17,7 +18,7 @@ Simply browse to [NVM's repository](https://github.com/creationix/nvm) and follo
 
 Then make sure NVM is installed by running `nvm --version` and that the output is a version number.
 
-Now install the NodeJS version required for the project, which is written in the project's **.nvmrc** file. 
+Now install the NodeJS version required for the project, which is written in the project's **.nvmrc** file.
 
 To do so, run `nvm install X`, **X** being the version found in the file.
 
