@@ -20,27 +20,6 @@
     "start": "node dist",
     "preflight": "rm -rf node_modules && yarn install --no-lockfile"
   },
-  "eslintConfig": {
-    "extends": "airbnb-base",
-    "parserOptions": {
-      "ecmaVersion": 7,
-      "sourceType": "module"
-    },
-    "env": {
-      "node": true
-    },
-    "rules": {
-      "no-underscore-dangle": [
-        "error",
-        {
-          "allow": [
-            "_id",
-            "_doc"
-          ]
-        }
-      ]
-    }
-  },
   "engines": {
     "node": ">=6"
   },
