@@ -17,27 +17,43 @@
   ],
   "paths": {
     "/authenticate": {
-        "post": {
-            "tags": ["users"],
-            "summary": "Get authentification token",
-            "description": "Get authentification token",
-            "security": [
-                {
-                    "token": []
-                }
-            ],
-            "parameters": [
-              {
-                "in": "body",
-                "name": "body",
-                "description": "User credentials",
-                "required": true,
-                "schema": {
-                  "$ref": "#/definitions/Credentials"
-                }
-              }
-            ]
-        }
+      "post": {
+        "tags": ["users"],
+        "summary": "Get authentification token",
+        "description": "Get authentification token",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User credentials",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Credentials"
+            }
+          }
+        ]
+      }
+    },
+    "/users/me": {
+      "get": {
+        "tags": ["users"],
+        "summary": "List current user",
+        "description": "Get the user matching the sent token",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
     },
     "/users": {
       "post": {
@@ -60,6 +76,11 @@
         "tags": ["users"],
         "summary": "List users",
         "description": "Get all users matching parameters",
+        "security": [
+          {
+            "token": []
+          }
+        ],
         "parameters": [
           {
             "name": "email",
@@ -74,55 +95,50 @@
             "description": "Maximum users returned",
             "required": false,
             "type": "number"
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
           }
         ]
       }
     }
   },
   "securityDefinitions": {
-      "token": {
-        "type": "apiKey",
-        "name": "x-access-token",
-        "in": "header"
-      }
-    },
+    "token": {
+      "type": "apiKey",
+      "name": "x-access-token",
+      "in": "header"
+    }
+  },
   "definitions": {
     "User": {
       "type": "object",
       "required": [
-        "firstname",
-        "lastname",
-        "username",
-        "password",
-        "age"
+        "email",
+        "password"
       ],
       "properties": {
-        "firstname": {
-          "type": "string"
-        },
-        "lastname": {
-          "type": "string"
-        },
-        "username": {
+        "email": {
           "type": "string",
           "description": "email"
         },
         "password": {
           "type": "string"
-        },
-        "age": {
-          "type": "integer"
         }
       }
     },
     "Credentials": {
       "type": "object",
       "required": [
-        "username",
+        "email",
         "password"
       ],
       "properties": {
-        "username": {
+        "email": {
           "type": "string",
           "description": "email"
         },

@@ -13,6 +13,7 @@ export default (app) => {
   app.post(`${apiUrl}authenticate`, users.authenticate);
   // secure
   app.get(`${apiUrl}users`, requiresToken, users.findAll);
+  app.get(`${apiUrl}users/me`, requiresToken, users.findMe);
   app.get(`${apiUrl}users/:id`, requiresToken, users.findOne);
   app.patch(`${apiUrl}users/:id`, requiresToken, users.update);
   app.delete(`${apiUrl}users/:id`, requiresToken, users.remove);
