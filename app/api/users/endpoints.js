@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt-nodejs';
+
 import blueprint from './blueprint';
 import { validator, queryBuilder } from '../helpers';
 import User from './model';
@@ -15,9 +16,7 @@ export const findAll = (req, res) => {
       User.find(where)
         .limit(limit)
         .select(projection)
-        .then((rows) => {
-          res.status(200).json(rows);
-        })
+        .then(rows => res.status(200).json(rows))
         .catch(e => res.status(500).json(e));
     })
     .catch(e => res.status(400).json(e));
@@ -34,7 +33,33 @@ export const findOne = (req, res) => {
       User.findOne({ _id: validated.id })
         .select(projection)
         .then((user) => {
-          res.status(200).json(user);
+          if (!user) {
+            res.status(404).end(`Couldn't find user with id ${validated.id}`);
+          } else {
+            res.status(200).json(user);
+          }
+        })
+        .catch(e => res.status(500).json(e));
+    })
+    .catch(e => res.status(400).json(e));
+};
+
+/**
+ * List the user relative to the sent token
+ */
+export const findMe = (req, res) => {
+  validator(req.params, blueprint.get.me)
+    .then((validated) => {
+      const { projection } = queryBuilder(validated);
+
+      User.findOne({ _id: req.decodedToken._id })
+        .select(projection)
+        .then((user) => {
+          if (!user) {
+            res.status(404).end(`Couldn't find user with id ${req.decodedToken._id}`);
+          } else {
+            res.status(200).json(user);
+          }
         })
         .catch(e => res.status(500).json(e));
     })
