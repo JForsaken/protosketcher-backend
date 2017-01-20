@@ -16,7 +16,8 @@
             "_doc"
           ]
         }
-      ]
+      ],
+      "linebreak-style": 0
     },
     "plugins": [
         "react",
