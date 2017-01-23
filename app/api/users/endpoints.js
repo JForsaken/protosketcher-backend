@@ -95,13 +95,17 @@ export const update = (req, res) => {
   if (req.decodedToken._id !== req.params.id) {
     res.status(403).end(`User with id '${req.decodedToken._id}' attempted to upddate '${req.params.id}'`);
   } else {
-    validator(req.body, blueprint.patch.one)
-      .then((validated) => {
-        User.update({ _id: req.params.id }, { $set: validated })
-          .then(() => res.status(200).send(`Sucessfully updated user with data ${JSON.stringify(validated)}`))
-          .catch(e => res.status(500).json(e));
-      })
-      .catch(e => res.status(400).json(e));
+    bcrypt.hash(req.body.password, null, null, (hashError, hash) => {
+      const body = req.body;
+      body.password = hash;
+      validator(body, blueprint.patch.one)
+        .then((validated) => {
+          User.update({ _id: req.params.id }, { $set: validated })
+            .then(() => res.status(200).send(`Sucessfully updated user with data ${JSON.stringify(validated)}`))
+            .catch(e => res.status(500).json(e));
+        })
+        .catch(e => res.status(400).json(e));
+    });
   }
 };
 
