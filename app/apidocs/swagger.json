@@ -34,27 +34,8 @@
         ]
       }
     },
-    "/users/me": {
-      "get": {
-        "tags": ["users"],
-        "summary": "List current user",
-        "description": "Get the user matching the sent token",
-        "security": [
-          {
-            "token": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "attributes",
-            "in": "query",
-            "description": "The columns that will be returned",
-            "required": false,
-            "type": "string"
-          }
-        ]
-      }
-    },
+
+
     "/users": {
       "post": {
         "tags": ["users"],
@@ -83,9 +64,158 @@
         ],
         "parameters": [
           {
-            "name": "email",
+            "name": "limit",
             "in": "query",
-            "description": "Email of the user",
+            "description": "The number of rows that will be returned",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": ["users"],
+        "summary": "Get single user by id",
+        "description": "Get the user matching the sent user id",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id of the user to get",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "patch": {
+        "tags": ["users"],
+        "summary": "Update user by id",
+        "description": "Update the user matching the sent user id",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id of the user to patch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "The fields and values which you want to update",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["users"],
+        "summary": "Delete user by id",
+        "description": "Delete the user matching the sent user id",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id of the user to delete",
+            "required": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/users/me": {
+      "get": {
+        "tags": ["users"],
+        "summary": "List current user",
+        "description": "Get the user matching the sent token",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+
+
+    "/prototypes": {
+      "post": {
+        "tags": ["prototypes"],
+        "summary": "Create prototype",
+        "description": "Create a new prototype",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created prototype object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Prototype"
+            }
+          }
+        ]
+      },
+      "get": {
+        "tags": ["prototypes"],
+        "summary": "List prototypes",
+        "description": "Get all prototypes matching parameters",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Name of the prototype",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "user",
+            "in": "query",
+            "description": "User id of the prototype's owner",
             "required": false,
             "type": "string"
           },
@@ -105,8 +235,99 @@
           }
         ]
       }
+    },
+    "/prototypes/{id}": {
+      "get": {
+        "tags": ["prototypes"],
+        "summary": "Get single prototype by id",
+        "description": "Get the prototype matching the sent prototype id",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id of the prototype to get",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The number of rows that will be returned",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Populates the data of the rows representing an id for another table",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "patch": {
+        "tags": ["prototypes"],
+        "summary": "Update prototype by id",
+        "description": "Update the prototype matching the sent prototype id",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id of the prototype to patch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "The fields and values which you want to update",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/Prototype"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["prototypes"],
+        "summary": "Delete prototype by id",
+        "description": "Delete the prototype matching the sent prototype id",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id of the prototype to delete",
+            "required": true,
+            "type": "string"
+          }
+        ]
+      }
     }
   },
+
+
   "securityDefinitions": {
     "token": {
       "type": "apiKey",
@@ -128,6 +349,23 @@
         },
         "password": {
           "type": "string"
+        }
+      }
+    },
+    "Prototype": {
+      "type": "object",
+      "required": [
+        "name",
+        "user"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the prototype"
+        },
+        "user": {
+          "type": "string",
+          "description": "User id of the prototype's owner"
         }
       }
     },
