@@ -15,7 +15,7 @@ export const findAll = (req, res) => {
         .populate(populate)
         .select(projection)
         .then((prototypes) => {
-          res.status(200).send(prototypes);
+          res.status(200).json(prototypes);
         })
         .catch(e => res.status(500).json(e));
     })
@@ -57,7 +57,7 @@ export const add = (req, res) => {
         if (err) {
           res.status(500).json(err);
         } else {
-          res.status(200).end(`Sucessfully added: ${JSON.stringify(validated)}`);
+          res.status(200).json(validated);
         }
       });
     })
@@ -78,7 +78,7 @@ export const update = (req, res) => {
         validator(req.body, blueprint.patch.one)
           .then((validated) => {
             Prototype.update({ _id: req.params.id }, { $set: validated })
-              .then(() => res.status(200).send(`Sucessfully updated prototype with data ${JSON.stringify(validated)}`))
+              .then(() => res.status(200).json(validated))
               .catch(e => res.status(500).json(e));
           })
           .catch(e => res.status(400).json(e));
@@ -102,7 +102,7 @@ export const remove = (req, res) => {
           } else {
             prototype.remove()
               .then(() => {
-                res.status(200).end(`Successfully removed: ${JSON.stringify(prototype)}`);
+                res.status(200).json(prototype);
               })
               .catch(e => res.status(500).json(e));
           }

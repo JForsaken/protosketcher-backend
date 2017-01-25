@@ -80,7 +80,7 @@ export const add = (req, res) => {
           if (err) {
             res.status(500).json(err);
           } else {
-            res.status(200).end(`Sucessfully added: ${JSON.stringify(updatedUser)}`);
+            res.status(200).json(updatedUser);
           }
         });
       });
@@ -101,7 +101,7 @@ export const update = (req, res) => {
       validator(body, blueprint.patch.one)
         .then((validated) => {
           User.update({ _id: req.params.id }, { $set: validated })
-            .then(() => res.status(200).send(`Sucessfully updated user with data ${JSON.stringify(validated)}`))
+            .then(() => res.status(200).json(validated))
             .catch(e => res.status(500).json(e));
         })
         .catch(e => res.status(400).json(e));
@@ -125,7 +125,7 @@ export const remove = (req, res) => {
             } else {
               user.remove()
                 .then(() => {
-                  res.status(200).end(`Successfully removed: ${JSON.stringify(user)}`);
+                  res.status(200).json(user);
                 })
                 .catch(e => res.status(500).json(e));
             }
@@ -142,7 +142,7 @@ export const remove = (req, res) => {
 export const authenticate = (req, res) => {
   validator(req.body, blueprint.post.authenticate)
     .then((validated) => {
-      User.findOne({ username: validated.username })
+      User.findOne({ email: validated.email })
         .then((user) => {
           // check if password matches
           bcrypt.compare(validated.password, user.password, (err, matches) => {
