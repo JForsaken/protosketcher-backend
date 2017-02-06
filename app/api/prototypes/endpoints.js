@@ -53,11 +53,11 @@ export const add = (req, res) => {
     .then((validated) => {
       const prototype = new Prototype(validated);
 
-      prototype.save((err) => {
+      prototype.save((err, doc) => {
         if (err) {
           res.status(500).json(err);
         } else {
-          res.status(200).json(validated);
+          res.status(200).json(doc);
         }
       });
     })
