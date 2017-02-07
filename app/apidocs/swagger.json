@@ -68,7 +68,7 @@
             "in": "query",
             "description": "The number of rows that will be returned",
             "required": false,
-            "type": "number"
+            "type": "integer"
           },
           {
             "name": "attributes",
@@ -224,7 +224,7 @@
             "in": "query",
             "description": "The number of rows that will be returned",
             "required": false,
-            "type": "number"
+            "type": "integer"
           },
           {
             "name": "attributes",
@@ -266,7 +266,7 @@
             "in": "query",
             "description": "The number of rows that will be returned",
             "required": false,
-            "type": "number"
+            "type": "integer"
           },
           {
             "name": "populate",
@@ -334,6 +334,13 @@
         "description": "Create a new page for a specific prototype",
         "parameters": [
           {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Prototype id of the page",
+            "required": true,
+            "type": "string"
+          },
+          {
             "in": "body",
             "name": "body",
             "description": "Created page object",
@@ -355,16 +362,16 @@
         ],
         "parameters": [
           {
-            "name": "name",
-            "in": "query",
-            "description": "Name of the page",
-            "required": false,
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Prototype id of the page",
+            "required": true,
             "type": "string"
           },
           {
-            "name": "user",
-            "in": "query",
-            "description": "Prototype id of the page",
+            "name": "name",
+            "in": "path",
+            "description": "Name of the page",
             "required": false,
             "type": "string"
           },
@@ -373,7 +380,7 @@
             "in": "query",
             "description": "The number of rows that will be returned",
             "required": false,
-            "type": "number"
+            "type": "integer"
           },
           {
             "name": "attributes",
@@ -422,7 +429,7 @@
             "in": "query",
             "description": "The number of rows that will be returned",
             "required": false,
-            "type": "number"
+            "type": "integer"
           },
           {
             "name": "populate",
