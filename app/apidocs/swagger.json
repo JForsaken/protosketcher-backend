@@ -80,7 +80,7 @@
         ]
       }
     },
-    "/users/{id}": {
+    "/users/{userId}": {
       "get": {
         "tags": ["users"],
         "summary": "Get single user by id",
@@ -222,7 +222,7 @@
           {
             "name": "limit",
             "in": "query",
-            "description": "Maximum users returned",
+            "description": "The number of rows that will be returned",
             "required": false,
             "type": "number"
           },
@@ -236,7 +236,7 @@
         ]
       }
     },
-    "/prototypes/{id}": {
+    "/prototypes/{prototypeId}": {
       "get": {
         "tags": ["prototypes"],
         "summary": "Get single prototype by id",
@@ -324,6 +324,183 @@
           }
         ]
       }
+    },
+
+
+    "/prototypes/{prototypeId}/pages": {
+      "post": {
+        "tags": ["pages"],
+        "summary": "Create page",
+        "description": "Create a new page for a specific prototype",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created page object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Page"
+            }
+          }
+        ]
+      },
+      "get": {
+        "tags": ["pages"],
+        "summary": "List pages",
+        "description": "Get all pages for a specific prototype matching parameters",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Name of the page",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "user",
+            "in": "query",
+            "description": "Prototype id of the page",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The number of rows that will be returned",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/prototypes/{prototypeId}/pages/{pageId}": {
+      "get": {
+        "tags": ["pages"],
+        "summary": "Get single page by id",
+        "description": "Get the page of a specfic prototype matching the sent page id",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Id of the prototype",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pageId",
+            "in": "path",
+            "description": "Id of the page",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The number of rows that will be returned",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Populates the data of the rows representing an id for another table",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "patch": {
+        "tags": ["pages"],
+        "summary": "Update page by id",
+        "description": "Update the page for a specific prototype matching the sent page id",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Id of the prototype",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pageId",
+            "in": "path",
+            "description": "Id of the page",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "The fields and values which you want to update",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/Page"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["pages"],
+        "summary": "Delete page by id",
+        "description": "Delete the page for a specific prototype matching the sent page id",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Id of the prototype",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pageId",
+            "in": "path",
+            "description": "Id of the page",
+            "required": true,
+            "type": "string"
+          }
+        ]
+      }
     }
   },
 
@@ -356,16 +533,38 @@
       "type": "object",
       "required": [
         "name",
-        "user"
+        "isMobile",
+        "userId"
       ],
       "properties": {
         "name": {
           "type": "string",
           "description": "Name of the prototype"
         },
+        "name": {
+          "type": "boolean",
+          "description": "If the prototype is built for mobile of desktop"
+        },
         "user": {
           "type": "string",
           "description": "User id of the prototype's owner"
+        }
+      }
+    },
+    "Page": {
+      "type": "object",
+      "required": [
+        "name",
+        "prototypeId"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the page"
+        },
+        "prototypeId": {
+          "type": "string",
+          "description": "Prototype id of the page's owner"
         }
       }
     },
