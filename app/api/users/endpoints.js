@@ -101,7 +101,7 @@ export const update = (req, res) => {
       validator(body, blueprint.patch.one)
         .then((validated) => {
           User.update({ _id: req.params.id }, { $set: validated })
-            .then(() => res.status(200).json(validated))
+            .then(() => res.status(200).json({ ...validated, _id: req.params.id }))
             .catch(e => res.status(500).json(e));
         })
         .catch(e => res.status(400).json(e));

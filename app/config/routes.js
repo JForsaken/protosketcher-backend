@@ -2,6 +2,7 @@ import express from 'express';
 
 import * as users from '../api/users/endpoints';
 import * as prototypes from '../api/prototypes/endpoints';
+import * as pages from '../api/pages/endpoints';
 
 import { requiresToken } from '../api/middlewares';
 
@@ -28,6 +29,13 @@ export default (app) => {
   app.patch(`${apiUrl}prototypes/:id`, requiresToken, prototypes.update);
   app.delete(`${apiUrl}prototypes/:id`, requiresToken, prototypes.remove);
 
+  // ~ Pages ~
+  // secure
+  app.post(`${apiUrl}prototypes/:prototypeId/pages`, requiresToken, pages.add);
+  app.get(`${apiUrl}prototypes/:prototypeId/pages`, requiresToken, pages.findAll);
+  app.get(`${apiUrl}prototypes/:prototypeId/pages/:id`, requiresToken, pages.findOne);
+  app.patch(`${apiUrl}prototypes/:prototypeId/pages/:id`, requiresToken, pages.update);
+  app.delete(`${apiUrl}prototypes/:prototypeId/pages/:id`, requiresToken, pages.remove);
 
   /* -- Web endpoints -- */
   app.use('/', express.static('public'));

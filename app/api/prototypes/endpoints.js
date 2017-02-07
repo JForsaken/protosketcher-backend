@@ -10,7 +10,7 @@ export const findAll = (req, res) => {
     .then((validated) => {
       const { where, limit, projection, populate } = queryBuilder(validated);
 
-      Prototype.find(where)
+      Prototype.find({ ...where, userId: req.decodedToken._id })
         .limit(limit)
         .populate(populate)
         .select(projection)
@@ -30,7 +30,7 @@ export const findOne = (req, res) => {
     .then((validated) => {
       const { projection, populate } = queryBuilder(validated);
 
-      Prototype.findOne({ _id: validated.id })
+      Prototype.findOne({ _id: validated.id, userId: req.decodedToken._id })
         .populate(populate)
         .select(projection)
         .then((prototype) => {
@@ -49,7 +49,7 @@ export const findOne = (req, res) => {
  * Add new prototype
  */
 export const add = (req, res) => {
-  validator({ user: req.decodedToken._id, ...req.body }, blueprint.post.add)
+  validator({ userId: req.decodedToken._id, ...req.body }, blueprint.post.add)
     .then((validated) => {
       const prototype = new Prototype(validated);
 
@@ -72,13 +72,13 @@ export const update = (req, res) => {
     .then((prototype) => {
       if (!prototype) {
         res.status(404).end(`Couldn't find prototype with id ${req.params.id}`);
-      } else if (req.decodedToken._id !== String(prototype.user)) {
-        res.status(403).end(`User with id '${req.decodedToken._id}' attempted to update prototype with '${prototype.user}' as owner`);
+      } else if (req.decodedToken._id !== String(prototype.userId)) {
+        res.status(403).end(`User with id '${req.decodedToken._id}' attempted to update prototype with '${prototype.userId}' as owner`);
       } else {
         validator(req.body, blueprint.patch.one)
           .then((validated) => {
             Prototype.update({ _id: req.params.id }, { $set: validated })
-              .then(() => res.status(200).json(validated))
+              .then(() => res.status(200).json({ ...validated, _id: req.params.id }))
               .catch(e => res.status(500).json(e));
           })
           .catch(e => res.status(400).json(e));
@@ -97,8 +97,8 @@ export const remove = (req, res) => {
         .then((prototype) => {
           if (!prototype) {
             res.status(404).end(`Couldn't find prototype with id ${validated.id}`);
-          } else if (req.decodedToken._id !== String(prototype.user)) {
-            res.status(403).end(`User with id '${req.decodedToken._id}' attempted to remove prototype with '${prototype.user}' as owner`);
+          } else if (req.decodedToken._id !== String(prototype.userId)) {
+            res.status(403).end(`User with id '${req.decodedToken._id}' attempted to remove prototype with '${prototype.userId}' as owner`);
           } else {
             prototype.remove()
               .then(() => {

@@ -2,8 +2,7 @@ export default {
   get: {
     all: {
       name: 'optional',
-      isMobile: 'optional',
-      userId: 'optional',
+      prototypeId: 'optional',
       attributes: 'optional',
       limit: 'optional',
       populate: 'optional',
@@ -11,8 +10,7 @@ export default {
     one: {
       id: 'required',
       name: 'optional',
-      isMobile: 'optional',
-      userId: 'optional',
+      prototypeId: 'optional',
       attributes: 'optional',
       limit: 'optional',
       populate: 'optional',
@@ -21,14 +19,12 @@ export default {
   post: {
     add: {
       name: 'required',
-      isMobile: 'required',
-      userId: 'required',
+      prototypeId: 'required',
     },
   },
   patch: {
     one: {
       name: 'optional',
-      isMobile: 'optional',
     },
   },
   delete: {
