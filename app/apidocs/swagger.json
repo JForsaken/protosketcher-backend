@@ -18,7 +18,9 @@
   "paths": {
     "/authenticate": {
       "post": {
-        "tags": ["users"],
+        "tags": [
+          "users"
+        ],
         "summary": "Get authentification token",
         "description": "Get authentification token",
         "parameters": [
@@ -34,11 +36,11 @@
         ]
       }
     },
-
-
     "/users": {
       "post": {
-        "tags": ["users"],
+        "tags": [
+          "users"
+        ],
         "summary": "Create user",
         "description": "Create a new user",
         "parameters": [
@@ -54,7 +56,9 @@
         ]
       },
       "get": {
-        "tags": ["users"],
+        "tags": [
+          "users"
+        ],
         "summary": "List users",
         "description": "Get all users matching parameters",
         "security": [
@@ -68,7 +72,7 @@
             "in": "query",
             "description": "The number of rows that will be returned",
             "required": false,
-            "type": "number"
+            "type": "integer"
           },
           {
             "name": "attributes",
@@ -80,9 +84,11 @@
         ]
       }
     },
-    "/users/{id}": {
+    "/users/{userId}": {
       "get": {
-        "tags": ["users"],
+        "tags": [
+          "users"
+        ],
         "summary": "Get single user by id",
         "description": "Get the user matching the sent user id",
         "security": [
@@ -108,7 +114,9 @@
         ]
       },
       "patch": {
-        "tags": ["users"],
+        "tags": [
+          "users"
+        ],
         "summary": "Update user by id",
         "description": "Update the user matching the sent user id",
         "security": [
@@ -136,7 +144,9 @@
         ]
       },
       "delete": {
-        "tags": ["users"],
+        "tags": [
+          "users"
+        ],
         "summary": "Delete user by id",
         "description": "Delete the user matching the sent user id",
         "security": [
@@ -157,7 +167,9 @@
     },
     "/users/me": {
       "get": {
-        "tags": ["users"],
+        "tags": [
+          "users"
+        ],
         "summary": "List current user",
         "description": "Get the user matching the sent token",
         "security": [
@@ -176,11 +188,11 @@
         ]
       }
     },
-
-
     "/prototypes": {
       "post": {
-        "tags": ["prototypes"],
+        "tags": [
+          "prototypes"
+        ],
         "summary": "Create prototype",
         "description": "Create a new prototype",
         "parameters": [
@@ -196,7 +208,9 @@
         ]
       },
       "get": {
-        "tags": ["prototypes"],
+        "tags": [
+          "prototypes"
+        ],
         "summary": "List prototypes",
         "description": "Get all prototypes matching parameters",
         "security": [
@@ -222,9 +236,9 @@
           {
             "name": "limit",
             "in": "query",
-            "description": "Maximum users returned",
+            "description": "The number of rows that will be returned",
             "required": false,
-            "type": "number"
+            "type": "integer"
           },
           {
             "name": "attributes",
@@ -236,9 +250,11 @@
         ]
       }
     },
-    "/prototypes/{id}": {
+    "/prototypes/{prototypeId}": {
       "get": {
-        "tags": ["prototypes"],
+        "tags": [
+          "prototypes"
+        ],
         "summary": "Get single prototype by id",
         "description": "Get the prototype matching the sent prototype id",
         "security": [
@@ -266,7 +282,7 @@
             "in": "query",
             "description": "The number of rows that will be returned",
             "required": false,
-            "type": "number"
+            "type": "integer"
           },
           {
             "name": "populate",
@@ -278,7 +294,9 @@
         ]
       },
       "patch": {
-        "tags": ["prototypes"],
+        "tags": [
+          "prototypes"
+        ],
         "summary": "Update prototype by id",
         "description": "Update the prototype matching the sent prototype id",
         "security": [
@@ -306,7 +324,9 @@
         ]
       },
       "delete": {
-        "tags": ["prototypes"],
+        "tags": [
+          "prototypes"
+        ],
         "summary": "Delete prototype by id",
         "description": "Delete the prototype matching the sent prototype id",
         "security": [
@@ -324,10 +344,237 @@
           }
         ]
       }
+    },
+    "/prototypes/{prototypeId}/pages": {
+      "post": {
+        "tags": [
+          "pages"
+        ],
+        "summary": "Create page",
+        "description": "Create a new page for a specific prototype",
+        "parameters": [
+          {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Prototype id of the page",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created page object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Page"
+            }
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "pages"
+        ],
+        "summary": "List pages",
+        "description": "Get all pages for a specific prototype matching parameters",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Prototype id of the page",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "description": "Name of the page",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "pageTypeId",
+            "in": "path",
+            "description": "Type of the page",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The number of rows that will be returned",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/prototypes/{prototypeId}/pages/{pageId}": {
+      "get": {
+        "tags": [
+          "pages"
+        ],
+        "summary": "Get single page by id",
+        "description": "Get the page of a specfic prototype matching the sent page id",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Id of the prototype",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pageId",
+            "in": "path",
+            "description": "Id of the page",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The number of rows that will be returned",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Populates the data of the rows representing an id for another table",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "pages"
+        ],
+        "summary": "Update page by id",
+        "description": "Update the page for a specific prototype matching the sent page id",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Id of the prototype",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pageId",
+            "in": "path",
+            "description": "Id of the page",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "The fields and values which you want to update",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/Page"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "pages"
+        ],
+        "summary": "Delete page by id",
+        "description": "Delete the page for a specific prototype matching the sent page id",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Id of the prototype",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pageId",
+            "in": "path",
+            "description": "Id of the page",
+            "required": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/pagetypes": {
+      "get": {
+        "tags": [
+          "pagetypes"
+        ],
+        "summary": "List page types",
+        "description": "Get all different page types matching parameters",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The number of rows that will be returned",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
     }
   },
-
-
   "securityDefinitions": {
     "token": {
       "type": "apiKey",
@@ -356,16 +603,51 @@
       "type": "object",
       "required": [
         "name",
-        "user"
+        "isMobile",
+        "userId"
       ],
       "properties": {
         "name": {
-          "type": "string",
-          "description": "Name of the prototype"
+          "type": "boolean",
+          "description": "If the prototype is built for mobile of desktop"
         },
         "user": {
           "type": "string",
           "description": "User id of the prototype's owner"
+        }
+      }
+    },
+    "Page": {
+      "type": "object",
+      "required": [
+        "name",
+        "prototypeId",
+        "pageTypeId"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the page"
+        },
+        "prototypeId": {
+          "type": "string",
+          "description": "Prototype id of the page's owner"
+        },
+        "pageTypeId": {
+          "type": "string",
+          "description": "Type id of the page"
+        }
+      }
+    },
+    "PageType": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The type of the page"
         }
       }
     },
