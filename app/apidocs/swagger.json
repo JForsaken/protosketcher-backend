@@ -399,7 +399,7 @@
           "Pages"
         ],
         "summary": "Get single page by id",
-        "description": "Get the page of a specfic prototype matching the sent page id",
+        "description": "Get the page for a specific prototype matching the sent page id",
         "security": [
           {
             "token": []
@@ -628,7 +628,7 @@
           "Shapes"
         ],
         "summary": "Get single shape by id",
-        "description": "Get the shape of a specfic shape matching the sent shape id",
+        "description": "Get the shape for a specific page matching the sent shape id",
         "security": [
           {
             "token": []
@@ -788,6 +788,286 @@
           }
         ]
       }
+    },
+    "/prototypes/{prototypeId}/shapes/{shapeId}/controls": {
+      "post": {
+        "tags": [
+          "Controls"
+        ],
+        "summary": "Create control",
+        "description": "Create a new control for a specific shape",
+        "parameters": [
+          {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Prototype id of the page",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "shapeId",
+            "in": "path",
+            "description": "Shape id of the control",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created control object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Control"
+            }
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Controls"
+        ],
+        "summary": "List controls",
+        "description": "Get all controls for a specific shape matching parameters",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Prototype id of the page",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "shapeId",
+            "in": "path",
+            "description": "Shape id of the control",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The number of rows that will be returned",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Populates the data of the rows representing an id for another table",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/prototypes/{prototypeId}/shapes/{shapeId}/controls/{controlId}": {
+      "get": {
+        "tags": [
+          "Controls"
+        ],
+        "summary": "Get single control by id",
+        "description": "Get the control for a specific shape matching the sent control id",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Id of the prototype",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "shapeId",
+            "in": "path",
+            "description": "Id of the shape",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "controlId",
+            "in": "path",
+            "description": "Id of the control to get",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The number of rows that will be returned",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Populates the data of the rows representing an id for another table",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Controls"
+        ],
+        "summary": "Update control by id",
+        "description": "Update the control for a specific shape matching the sent control id",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Id of the prototype",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "shapeId",
+            "in": "path",
+            "description": "Id of the shape",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "controlId",
+            "in": "path",
+            "description": "Id of the control to patch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "The fields and values which you want to update",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/Control"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Controls"
+        ],
+        "summary": "Delete control by id",
+        "description": "Delete the control for a specific shape matching the sent control id",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Id of the prototype",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "shapeId",
+            "in": "path",
+            "description": "Id of the shape",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "controlId",
+            "in": "path",
+            "description": "Id of the control to get",
+            "required": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/eventtypes": {
+      "get": {
+        "tags": [
+          "Event Types"
+        ],
+        "summary": "List event types",
+        "description": "Get all different event types matching parameters",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The number of rows that will be returned",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/actiontypes": {
+      "get": {
+        "tags": [
+          "Action Types"
+        ],
+        "summary": "List action types",
+        "description": "Get all different action types matching parameters",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The number of rows that will be returned",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
     }
   },
   "securityDefinitions": {
@@ -909,6 +1189,55 @@
         "type": {
           "type": "string",
           "description": "The type of the shape"
+        }
+      }
+    },
+    "Control": {
+      "type": "object",
+      "required": [
+        "eventTypeId",
+        "actionTypeId",
+        "affectedShapes"
+      ],
+      "properties": {
+        "eventTypeId": {
+          "type": "string",
+          "description": "Type id of the event"
+        },
+        "actionTypeId": {
+          "type": "string",
+          "description": "Type id of the action"
+        },
+        "affectedShapes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The affected shapes by the control"
+        }
+      }
+    },
+    "EventType": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The type of the event"
+        }
+      }
+    },
+    "ActionType": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The type of the action"
         }
       }
     },
