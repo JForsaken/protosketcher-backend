@@ -12,7 +12,6 @@ export default {
       populate: 'optional',
     },
     one: {
-      id: 'required',
       shapeTypeId: 'optional',
       parentId: 'optional',
       path: 'optional',
@@ -43,11 +42,6 @@ export default {
       color: 'optional',
       x: 'optional',
       y: 'optional',
-    },
-  },
-  delete: {
-    one: {
-      id: 'required',
     },
   },
 };

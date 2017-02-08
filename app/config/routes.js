@@ -6,6 +6,9 @@ import * as pages from '../api/pages/endpoints';
 import * as pageTypes from '../api/pagetypes/endpoints';
 import * as shapes from '../api/shapes/endpoints';
 import * as shapeTypes from '../api/shapetypes/endpoints';
+import * as controls from '../api/controls/endpoints';
+import * as eventTypes from '../api/eventtypes/endpoints';
+import * as actionTypes from '../api/actiontypes/endpoints';
 
 import { requiresToken } from '../api/middlewares';
 
@@ -55,6 +58,22 @@ export default (app) => {
   // ~ ShapeType ~
   // secure
   app.get(`${apiUrl}shapetypes`, requiresToken, shapeTypes.findAll);
+
+  // ~ Control ~
+  // secure
+  app.post(`${apiUrl}prototypes/:prototypeId/shapes/:shapeId/controls`, requiresToken, controls.add);
+  app.get(`${apiUrl}prototypes/:prototypeId/shapes/:shapeId/controls`, requiresToken, controls.findAll);
+  app.get(`${apiUrl}prototypes/:prototypeId/shapes/:shapeId/controls/:id`, requiresToken, controls.findOne);
+  app.patch(`${apiUrl}prototypes/:prototypeId/shapes/:shapeId/controls/:id`, requiresToken, controls.update);
+  app.delete(`${apiUrl}prototypes/:prototypeId/shapes/:shapeId/controls/:id`, requiresToken, controls.remove);
+
+  // ~ EventType ~
+  // secure
+  app.get(`${apiUrl}eventtypes`, requiresToken, eventTypes.findAll);
+
+  // ~ ActionType ~
+  // secure
+  app.get(`${apiUrl}actiontypes`, requiresToken, actionTypes.findAll);
 
 
   /* -- Web endpoints -- */

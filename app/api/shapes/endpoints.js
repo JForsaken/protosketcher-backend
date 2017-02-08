@@ -50,12 +50,12 @@ export const findOne = (req, res) => {
           .then((validated) => {
             const { projection, populate } = queryBuilder(validated);
 
-            Shape.findOne({ _id: validated.id, pageId: req.params.pageId })
+            Shape.findOne({ _id: req.params.id, pageId: req.params.pageId })
               .populate(populate)
               .select(projection)
               .then((shape) => {
                 if (!shape) {
-                  res.status(404).end(`Couldn't find shape with id ${validated.id}`);
+                  res.status(404).end(`Couldn't find shape with id ${req.params.id}`);
                 } else {
                   res.status(200).json(shape);
                 }
@@ -139,23 +139,19 @@ export const remove = (req, res) => {
       } else if (req.decodedToken._id !== String(prototype.userId)) {
         res.status(403).end(`User with id '${req.decodedToken._id}' attempted to delete shape for page with '${prototype.userId}' as owner`);
       } else {
-        validator(req.params, blueprint.delete.one)
-          .then((validated) => {
-            Shape.findOne({ _id: validated.id, pageId: req.params.pageId })
-              .then((shape) => {
-                if (!shape) {
-                  res.status(404).end(`Couldn't find shape with id ${validated.id}`);
-                } else {
-                  shape.remove()
-                    .then(() => {
-                      res.status(200).json(shape);
-                    })
-                    .catch(e => res.status(500).json(e));
-                }
-              })
-              .catch(e => res.status(500).json(e));
+        Shape.findOne({ _id: req.params.id, pageId: req.params.pageId })
+          .then((shape) => {
+            if (!shape) {
+              res.status(404).end(`Couldn't find shape with id ${req.params.id}`);
+            } else {
+              shape.remove()
+                .then(() => {
+                  res.status(200).json(shape);
+                })
+                .catch(e => res.status(500).json(e));
+            }
           })
-          .catch(e => res.status(400).json(e));
+          .catch(e => res.status(500).json(e));
       }
     })
     .catch(e => res.status(500).json(e));
