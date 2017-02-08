@@ -376,6 +376,13 @@
             "type": "string"
           },
           {
+            "name": "pageTypeId",
+            "in": "path",
+            "description": "Type of the page",
+            "required": true,
+            "type": "string"
+          },
+          {
             "name": "limit",
             "in": "query",
             "description": "The number of rows that will be returned",
@@ -508,6 +515,36 @@
           }
         ]
       }
+    },
+
+
+    "/pagetypes": {
+      "get": {
+        "tags": ["pagetypes"],
+        "summary": "List page types",
+        "description": "Get all different page types matching parameters",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The number of rows that will be returned",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
     }
   },
 
@@ -562,7 +599,8 @@
       "type": "object",
       "required": [
         "name",
-        "prototypeId"
+        "prototypeId",
+        "pageTypeId"
       ],
       "properties": {
         "name": {
@@ -572,6 +610,22 @@
         "prototypeId": {
           "type": "string",
           "description": "Prototype id of the page's owner"
+        },
+        "pageTypeId": {
+          "type": "string",
+          "description": "Type id of the page"
+        }
+      }
+    },
+    "PageType": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The type of the page"
         }
       }
     },
