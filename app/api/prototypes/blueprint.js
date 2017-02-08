@@ -3,7 +3,6 @@ export default {
     all: {
       name: 'optional',
       isMobile: 'optional',
-      userId: 'optional',
       attributes: 'optional',
       limit: 'optional',
       populate: 'optional',
@@ -12,7 +11,6 @@ export default {
       id: 'required',
       name: 'optional',
       isMobile: 'optional',
-      userId: 'optional',
       attributes: 'optional',
       limit: 'optional',
       populate: 'optional',
@@ -22,7 +20,6 @@ export default {
     add: {
       name: 'required',
       isMobile: 'required',
-      userId: 'required',
     },
   },
   patch: {

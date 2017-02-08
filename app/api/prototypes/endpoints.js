@@ -51,7 +51,7 @@ export const findOne = (req, res) => {
 export const add = (req, res) => {
   validator({ userId: req.decodedToken._id, ...req.body }, blueprint.post.add)
     .then((validated) => {
-      const prototype = new Prototype(validated);
+      const prototype = new Prototype({ userId: req.decodedToken.id, ...validated });
 
       prototype.save((err, doc) => {
         if (err) {

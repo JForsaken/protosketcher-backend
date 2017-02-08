@@ -2,8 +2,6 @@ export default {
   get: {
     all: {
       name: 'optional',
-      prototypeId: 'optional',
-      pageTypeId: 'optional',
       attributes: 'optional',
       limit: 'optional',
       populate: 'optional',
@@ -11,7 +9,6 @@ export default {
     one: {
       id: 'required',
       name: 'optional',
-      prototypeId: 'optional',
       pageTypeId: 'optional',
       attributes: 'optional',
       limit: 'optional',
@@ -21,8 +18,6 @@ export default {
   post: {
     add: {
       name: 'required',
-      prototypeId: 'required',
-      pageTypeId: 'required',
     },
   },
   patch: {
