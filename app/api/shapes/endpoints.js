@@ -1,10 +1,12 @@
+import { omit } from 'ramda';
+
 import blueprint from './blueprint';
 import { validator, queryBuilder } from '../helpers';
-import Page from './model';
+import Shape from './model';
 import Prototype from '../prototypes/model';
 
 /**
- * List all pages
+ * List all shapes
  */
 export const findAll = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
@@ -12,18 +14,18 @@ export const findAll = (req, res) => {
       if (!prototype) {
         res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
-        res.status(403).end(`User with id '${req.decodedToken._id}' attempted to get pages for prototype with '${prototype.userId}' as owner`);
+        res.status(403).end(`User with id '${req.decodedToken._id}' attempted to get shapes for page with '${prototype.userId}' as owner`);
       } else {
         validator(req.query, blueprint.get.all)
           .then((validated) => {
             const { where, limit, projection, populate } = queryBuilder(validated);
 
-            Page.find({ ...where, prototypeId: req.params.prototypeId })
+            Shape.find({ ...where, pageId: req.params.pageId })
               .limit(limit)
               .populate(populate)
               .select(projection)
-              .then((pages) => {
-                res.status(200).json(pages);
+              .then((shapes) => {
+                res.status(200).json(shapes);
               })
               .catch(e => res.status(500).json(e));
           })
@@ -34,7 +36,7 @@ export const findAll = (req, res) => {
 };
 
 /**
- * List one page by id
+ * List one shape by id
  */
 export const findOne = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
@@ -42,20 +44,20 @@ export const findOne = (req, res) => {
       if (!prototype) {
         res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
-        res.status(403).end(`User with id '${req.decodedToken._id}' attempted to get page for prototype with '${prototype.userId}' as owner`);
+        res.status(403).end(`User with id '${req.decodedToken._id}' attempted to get shape for page with '${prototype.userId}' as owner`);
       } else {
         validator(req.params, blueprint.get.one)
           .then((validated) => {
             const { projection, populate } = queryBuilder(validated);
 
-            Page.findOne({ _id: validated.id, prototypeId: req.params.prototypeId })
+            Shape.findOne({ _id: validated.id, pageId: req.params.pageId })
               .populate(populate)
               .select(projection)
-              .then((page) => {
-                if (!page) {
-                  res.status(404).end(`Couldn't find page with id ${validated.id}`);
+              .then((shape) => {
+                if (!shape) {
+                  res.status(404).end(`Couldn't find shape with id ${validated.id}`);
                 } else {
-                  res.status(200).json(page);
+                  res.status(200).json(shape);
                 }
               })
               .catch(e => res.status(500).json(e));
@@ -67,7 +69,7 @@ export const findOne = (req, res) => {
 };
 
 /**
- * Add new page
+ * Add new shape
  */
 export const add = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
@@ -75,17 +77,17 @@ export const add = (req, res) => {
       if (!prototype) {
         res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
-        res.status(403).end(`User with id '${req.decodedToken._id}' attempted to create page for prototype with '${prototype.userId}' as owner`);
+        res.status(403).end(`User with id '${req.decodedToken._id}' attempted to create shape for page with '${prototype.userId}' as owner`);
       } else {
-        validator({ prototypeId: req.params.prototypeId, ...req.body }, blueprint.post.add)
+        validator({ pageId: req.params.pageId, ...req.body }, blueprint.post.add)
           .then((validated) => {
-            const page = new Page({ prototypeId: req.params.prototypeId, ...validated });
+            const shape = new Shape({ pageId: req.params.pageId, ...omit(['uuid'], validated) });
 
-            page.save((err, doc) => {
+            shape.save((err, doc) => {
               if (err) {
                 res.status(500).json(err);
               } else {
-                res.status(200).json(doc);
+                res.status(200).json({ uuid: validated.uuid, ...doc._doc });
               }
             });
           })
@@ -96,7 +98,7 @@ export const add = (req, res) => {
 };
 
 /**
- * Update one page by id
+ * Update one shape by id
  */
 export const update = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
@@ -104,16 +106,16 @@ export const update = (req, res) => {
       if (!prototype) {
         res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
-        res.status(403).end(`User with id '${req.decodedToken._id}' attempted to update page for prototype with '${prototype.userId}' as owner`);
+        res.status(403).end(`User with id '${req.decodedToken._id}' attempted to update shape for page with '${prototype.userId}' as owner`);
       } else {
-        Page.findOne({ _id: req.params.id, prototypeId: req.params.prototypeId })
-          .then((page) => {
-            if (!page) {
-              res.status(404).end(`Couldn't find page with id ${req.params.id}`);
+        Shape.findOne({ _id: req.params.id, pageId: req.params.pageId })
+          .then((shape) => {
+            if (!shape) {
+              res.status(404).end(`Couldn't find shape with id ${req.params.id}`);
             } else {
               validator(req.body, blueprint.patch.one)
                 .then((validated) => {
-                  Page.update({ _id: req.params.id }, { $set: validated })
+                  Shape.update({ _id: req.params.id }, { $set: validated })
                     .then(() => res.status(200).json({ ...validated, _id: req.params.id }))
                     .catch(e => res.status(500).json(e));
                 })
@@ -127,7 +129,7 @@ export const update = (req, res) => {
 };
 
 /**
- * Remove one page by id
+ * Remove one shape by id
  */
 export const remove = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
@@ -135,18 +137,18 @@ export const remove = (req, res) => {
       if (!prototype) {
         res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
-        res.status(403).end(`User with id '${req.decodedToken._id}' attempted to delete page for prototype with '${prototype.userId}' as owner`);
+        res.status(403).end(`User with id '${req.decodedToken._id}' attempted to delete shape for page with '${prototype.userId}' as owner`);
       } else {
         validator(req.params, blueprint.delete.one)
           .then((validated) => {
-            Page.findOne({ _id: validated.id, prototypeId: req.params.prototypeId })
-              .then((page) => {
-                if (!page) {
-                  res.status(404).end(`Couldn't find page with id ${validated.id}`);
+            Shape.findOne({ _id: validated.id, pageId: req.params.pageId })
+              .then((shape) => {
+                if (!shape) {
+                  res.status(404).end(`Couldn't find shape with id ${validated.id}`);
                 } else {
-                  page.remove()
+                  shape.remove()
                     .then(() => {
-                      res.status(200).json(page);
+                      res.status(200).json(shape);
                     })
                     .catch(e => res.status(500).json(e));
                 }
