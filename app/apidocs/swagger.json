@@ -842,10 +842,6 @@
           "type": "string",
           "description": "Name of the page"
         },
-        "prototypeId": {
-          "type": "string",
-          "description": "Prototype id of the page's owner"
-        },
         "pageTypeId": {
           "type": "string",
           "description": "Type id of the page"
@@ -874,7 +870,11 @@
         "y"
       ],
       "properties": {
-        "shapeTyepId": {
+        "uuid": {
+          "type": "string",
+          "description": "Temporary UUID of the created shape"
+        },
+        "shapeTypeId": {
           "type": "string",
           "description": "Type id of the shape"
         },
