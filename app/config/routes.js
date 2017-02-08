@@ -3,6 +3,7 @@ import express from 'express';
 import * as users from '../api/users/endpoints';
 import * as prototypes from '../api/prototypes/endpoints';
 import * as pages from '../api/pages/endpoints';
+import * as pageTypes from '../api/pagetypes/endpoints';
 
 import { requiresToken } from '../api/middlewares';
 
@@ -36,6 +37,11 @@ export default (app) => {
   app.get(`${apiUrl}prototypes/:prototypeId/pages/:id`, requiresToken, pages.findOne);
   app.patch(`${apiUrl}prototypes/:prototypeId/pages/:id`, requiresToken, pages.update);
   app.delete(`${apiUrl}prototypes/:prototypeId/pages/:id`, requiresToken, pages.remove);
+
+  // ~ PageTypes ~
+  // secure
+  app.get(`${apiUrl}pagetypes`, requiresToken, pageTypes.findAll);
+
 
   /* -- Web endpoints -- */
   app.use('/', express.static('public'));

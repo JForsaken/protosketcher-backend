@@ -8,6 +8,10 @@ const Page = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Prototype',
   },
+  pageTypeId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'PageType',
+  },
 });
 
 export default mongoose.model('Page', Page);
