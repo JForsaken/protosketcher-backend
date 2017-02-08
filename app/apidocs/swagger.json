@@ -878,6 +878,10 @@
           "type": "string",
           "description": "Type id of the shape"
         },
+        "parentId": {
+          "type": "string",
+          "description": "Parent id of the squiggly shape"
+        },
         "path": {
           "type": "string",
           "description": "SVG path of the shape"

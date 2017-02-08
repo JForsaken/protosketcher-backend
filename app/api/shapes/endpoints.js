@@ -98,7 +98,7 @@ export const add = (req, res) => {
 };
 
 /**
- * Update one page by id
+ * Update one shape by id
  */
 export const update = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
@@ -129,7 +129,7 @@ export const update = (req, res) => {
 };
 
 /**
- * Remove one page by id
+ * Remove one shape by id
  */
 export const remove = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
