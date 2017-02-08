@@ -30,12 +30,12 @@ export const findOne = (req, res) => {
     .then((validated) => {
       const { projection, populate } = queryBuilder(validated);
 
-      Prototype.findOne({ _id: validated.id, userId: req.decodedToken._id })
+      Prototype.findOne({ _id: req.params.id, userId: req.decodedToken._id })
         .populate(populate)
         .select(projection)
         .then((prototype) => {
           if (!prototype) {
-            res.status(404).end(`Couldn't find prototype with id ${validated.id}`);
+            res.status(404).end(`Couldn't find prototype with id ${req.params.id}`);
           } else {
             res.status(200).json(prototype);
           }
@@ -91,23 +91,19 @@ export const update = (req, res) => {
  * Remove one prototype by id
  */
 export const remove = (req, res) => {
-  validator(req.params, blueprint.delete.one)
-    .then((validated) => {
-      Prototype.findOne({ _id: validated.id })
-        .then((prototype) => {
-          if (!prototype) {
-            res.status(404).end(`Couldn't find prototype with id ${validated.id}`);
-          } else if (req.decodedToken._id !== String(prototype.userId)) {
-            res.status(403).end(`User with id '${req.decodedToken._id}' attempted to remove prototype with '${prototype.userId}' as owner`);
-          } else {
-            prototype.remove()
-              .then(() => {
-                res.status(200).json(prototype);
-              })
-              .catch(e => res.status(500).json(e));
-          }
-        })
-        .catch(e => res.status(500).json(e));
+  Prototype.findOne({ _id: req.params.id })
+    .then((prototype) => {
+      if (!prototype) {
+        res.status(404).end(`Couldn't find prototype with id ${req.params.id}`);
+      } else if (req.decodedToken._id !== String(prototype.userId)) {
+        res.status(403).end(`User with id '${req.decodedToken._id}' attempted to remove prototype with '${prototype.userId}' as owner`);
+      } else {
+        prototype.remove()
+          .then(() => {
+            res.status(200).json(prototype);
+          })
+          .catch(e => res.status(500).json(e));
+      }
     })
-    .catch(e => res.status(400).json(e));
+    .catch(e => res.status(500).json(e));
 };

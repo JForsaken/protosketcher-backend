@@ -10,7 +10,6 @@ export default {
       attributes: 'optional',
     },
     one: {
-      id: 'required',
       email: 'optional',
       password: 'optional',
       attributes: 'optional',
@@ -31,11 +30,6 @@ export default {
     one: {
       email: 'optional',
       password: 'optional',
-    },
-  },
-  delete: {
-    one: {
-      id: 'required',
     },
   },
 };
