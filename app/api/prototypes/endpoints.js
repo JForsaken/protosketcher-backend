@@ -26,7 +26,7 @@ export const findAll = (req, res) => {
  * List one prototype by id
  */
 export const findOne = (req, res) => {
-  validator(req.params, blueprint.get.one)
+  validator(req.query, blueprint.get.one)
     .then((validated) => {
       const { projection, populate } = queryBuilder(validated);
 
@@ -49,7 +49,7 @@ export const findOne = (req, res) => {
  * Add new prototype
  */
 export const add = (req, res) => {
-  validator({ userId: req.decodedToken._id, ...req.body }, blueprint.post.add)
+  validator(req.body, blueprint.post.add)
     .then((validated) => {
       const prototype = new Prototype({ userId: req.decodedToken._id, ...validated });
 

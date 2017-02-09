@@ -44,7 +44,7 @@ export const findOne = (req, res) => {
       } else if (req.decodedToken._id !== String(prototype.userId)) {
         res.status(403).end(`User with id '${req.decodedToken._id}' attempted to get text for page with '${prototype.userId}' as owner`);
       } else {
-        validator(req.params, blueprint.get.one)
+        validator(req.query, blueprint.get.one)
           .then((validated) => {
             const { projection, populate } = queryBuilder(validated);
 
@@ -77,7 +77,7 @@ export const add = (req, res) => {
       } else if (req.decodedToken._id !== String(prototype.userId)) {
         res.status(403).end(`User with id '${req.decodedToken._id}' attempted to create text for page with '${prototype.userId}' as owner`);
       } else {
-        validator({ pageId: req.params.pageId, ...req.body }, blueprint.post.add)
+        validator(req.body, blueprint.post.add)
           .then((validated) => {
             const text = new Text({ pageId: req.params.pageId, ...validated });
 
