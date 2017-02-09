@@ -1207,14 +1207,14 @@
           "type": "string",
           "description": "Type id of the action"
         },
-        "affectedShapes": {
+        "affectedShapeIds": {
           "type": "array",
           "items": {
             "type": "string"
           },
           "description": "The affected shapes by the control"
         },
-        "affectedPage": {
+        "affectedPageId": {
           "type": "string",
           "description": "The affected page by the control"
         }
