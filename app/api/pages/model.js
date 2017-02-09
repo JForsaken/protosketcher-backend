@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 import Shape from '../shapes/model';
+import Text from '../texts/model';
 
 const Schema = mongoose.Schema;
 
@@ -18,6 +19,7 @@ const Page = new Schema({
 
 Page.post('remove', (doc) => {
   Shape.remove({ pageId: doc._id }).exec();
+  Text.remove({ pageId: doc._id }).exec();
 });
 
 export default mongoose.model('Page', Page);

@@ -6,6 +6,7 @@ import * as pages from '../api/pages/endpoints';
 import * as pageTypes from '../api/pagetypes/endpoints';
 import * as shapes from '../api/shapes/endpoints';
 import * as shapeTypes from '../api/shapetypes/endpoints';
+import * as texts from '../api/texts/endpoints';
 import * as controls from '../api/controls/endpoints';
 import * as eventTypes from '../api/eventtypes/endpoints';
 import * as actionTypes from '../api/actiontypes/endpoints';
@@ -58,6 +59,14 @@ export default (app) => {
   // ~ ShapeType ~
   // secure
   app.get(`${apiUrl}shapetypes`, requiresToken, shapeTypes.findAll);
+
+  // ~ Text ~
+  // secure
+  app.post(`${apiUrl}prototypes/:prototypeId/pages/:pageId/texts`, requiresToken, texts.add);
+  app.get(`${apiUrl}prototypes/:prototypeId/pages/:pageId/texts`, requiresToken, texts.findAll);
+  app.get(`${apiUrl}prototypes/:prototypeId/pages/:pageId/texts/:id`, requiresToken, texts.findOne);
+  app.patch(`${apiUrl}prototypes/:prototypeId/pages/:pageId/texts/:id`, requiresToken, texts.update);
+  app.delete(`${apiUrl}prototypes/:prototypeId/pages/:pageId/texts/:id`, requiresToken, texts.remove);
 
   // ~ Control ~
   // secure
