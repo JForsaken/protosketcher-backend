@@ -8,7 +8,6 @@ export default {
       populate: 'optional',
     },
     one: {
-      id: 'required',
       name: 'optional',
       isMobile: 'optional',
       attributes: 'optional',
@@ -26,11 +25,6 @@ export default {
     one: {
       name: 'optional',
       isMobile: 'optional',
-    },
-  },
-  delete: {
-    one: {
-      id: 'required',
     },
   },
 };

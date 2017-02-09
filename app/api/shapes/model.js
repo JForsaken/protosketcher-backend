@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+import Control from '../controls/model';
+
 const Schema = mongoose.Schema;
 
 const Shape = new Schema({
@@ -20,6 +22,10 @@ const Shape = new Schema({
   color: String,
   x: Number,
   y: Number,
+});
+
+Shape.post('remove', (doc) => {
+  Control.remove({ shapeId: doc._id }).exec();
 });
 
 export default mongoose.model('Shape', Shape);

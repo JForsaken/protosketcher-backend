@@ -30,11 +30,11 @@ export const findOne = (req, res) => {
     .then((validated) => {
       const { projection } = queryBuilder(validated);
 
-      User.findOne({ _id: validated.id })
+      User.findOne({ _id: req.params.id })
         .select(projection)
         .then((user) => {
           if (!user) {
-            res.status(404).end(`Couldn't find user with id ${validated.id}`);
+            res.status(404).end(`Couldn't find user with id ${req.params.id}`);
           } else {
             res.status(200).json(user);
           }
@@ -113,27 +113,23 @@ export const update = (req, res) => {
  * Remove one user by id
  */
 export const remove = (req, res) => {
-  validator(req.params, blueprint.delete.one)
-    .then((validated) => {
-      if (req.decodedToken._id !== validated.id) {
-        res.status(403).end(`User with id '${req.decodedToken._id}' attempted to remove '${validated.id}'`);
-      } else {
-        User.findOne({ _id: validated.id })
-          .then((user) => {
-            if (!user) {
-              res.status(404).end(`Couldn't find user with id ${validated.id}`);
-            } else {
-              user.remove()
-                .then(() => {
-                  res.status(200).json(user);
-                })
-                .catch(e => res.status(500).json(e));
-            }
-          })
-          .catch(e => res.status(500).json(e));
-      }
-    })
-    .catch(e => res.status(400).json(e));
+  if (req.decodedToken._id !== req.params.id) {
+    res.status(403).end(`User with id '${req.decodedToken._id}' attempted to remove '${req.params.id}'`);
+  } else {
+    User.findOne({ _id: req.params.id })
+      .then((user) => {
+        if (!user) {
+          res.status(404).end(`Couldn't find user with id ${req.params.id}`);
+        } else {
+          user.remove()
+            .then(() => {
+              res.status(200).json(user);
+            })
+            .catch(e => res.status(500).json(e));
+        }
+      })
+      .catch(e => res.status(500).json(e));
+  }
 };
 
 /**

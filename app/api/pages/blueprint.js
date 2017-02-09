@@ -7,7 +7,6 @@ export default {
       populate: 'optional',
     },
     one: {
-      id: 'required',
       name: 'optional',
       pageTypeId: 'optional',
       attributes: 'optional',
@@ -24,11 +23,6 @@ export default {
     one: {
       name: 'optional',
       pageTypeId: 'optional',
-    },
-  },
-  delete: {
-    one: {
-      id: 'required',
     },
   },
 };
