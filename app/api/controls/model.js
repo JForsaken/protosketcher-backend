@@ -19,12 +19,10 @@ const Control = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Shape',
   }],
-  /*
   affectedTextIds: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Text',
   }],
-  */
   affectedPageId: {
     type: mongoose.Schema.Types.ObjectId,
     default: null,

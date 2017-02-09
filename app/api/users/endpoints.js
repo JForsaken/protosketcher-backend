@@ -26,7 +26,7 @@ export const findAll = (req, res) => {
  * List one user by id
  */
 export const findOne = (req, res) => {
-  validator(req.params, blueprint.get.one)
+  validator(req.query, blueprint.get.one)
     .then((validated) => {
       const { projection } = queryBuilder(validated);
 
@@ -48,7 +48,7 @@ export const findOne = (req, res) => {
  * List the user relative to the sent token
  */
 export const findMe = (req, res) => {
-  validator(req.params, blueprint.get.me)
+  validator(req.query, blueprint.get.me)
     .then((validated) => {
       const { projection } = queryBuilder(validated);
 

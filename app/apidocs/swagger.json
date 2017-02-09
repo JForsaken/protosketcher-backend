@@ -789,6 +789,226 @@
         ]
       }
     },
+    "/prototypes/{prototypeId}/pages/{pageId}/texts": {
+      "post": {
+        "tags": [
+          "Texts"
+        ],
+        "summary": "Create text",
+        "description": "Create a new text for a specific page",
+        "parameters": [
+          {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Prototype id of the page",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pageId",
+            "in": "path",
+            "description": "Page id of the text",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created text object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Text"
+            }
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Texts"
+        ],
+        "summary": "List texts",
+        "description": "Get all texts for a specific page matching parameters",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Prototype id of the page",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pageId",
+            "in": "path",
+            "description": "Page id of the text",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The number of rows that will be returned",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Populates the data of the rows representing an id for another table",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/prototypes/{prototypeId}/pages/{pageId}/texts/{textId}": {
+      "get": {
+        "tags": [
+          "Texts"
+        ],
+        "summary": "Get single text by id",
+        "description": "Get the text for a specific page matching the sent text id",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Id of the prototype",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pageId",
+            "in": "path",
+            "description": "Id of the page",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "textId",
+            "in": "path",
+            "description": "Id of the text to get",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "attributes",
+            "in": "query",
+            "description": "The columns that will be returned",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The number of rows that will be returned",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Populates the data of the rows representing an id for another table",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Texts"
+        ],
+        "summary": "Update text by id",
+        "description": "Update the text for a specific page matching the sent text id",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Id of the prototype",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pageId",
+            "in": "path",
+            "description": "Id of the page",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "textId",
+            "in": "path",
+            "description": "Id of the text to patch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "The fields and values which you want to update",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/Text"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Texts"
+        ],
+        "summary": "Delete text by id",
+        "description": "Delete the text for a specific page matching the sent text id",
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prototypeId",
+            "in": "path",
+            "description": "Id of the prototype",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pageId",
+            "in": "path",
+            "description": "Id of the page",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "textId",
+            "in": "path",
+            "description": "Id of the text to delete",
+            "required": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
     "/prototypes/{prototypeId}/shapes/{shapeId}/controls": {
       "post": {
         "tags": [
@@ -1189,6 +1409,37 @@
         "type": {
           "type": "string",
           "description": "The type of the shape"
+        }
+      }
+    },
+    "Text": {
+      "type": "object",
+      "required": [
+        "fontSize",
+        "content",
+        "x",
+        "y"
+      ],
+      "properties": {
+        "fontSize": {
+          "type": "number",
+          "description": "Font size of the text"
+        },
+        "content": {
+          "type": "string",
+          "description": "Content of the text"
+        },
+        "x": {
+          "type": "integer",
+          "description": "X position for the shape"
+        },
+        "y": {
+          "type": "integer",
+          "description": "Y position for the shape"
+        },
+        "shapeId": {
+          "type": "string",
+          "description": "Shape id of the text if it has a parent shape"
         }
       }
     },
