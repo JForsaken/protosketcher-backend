@@ -25,6 +25,11 @@ const Control = new Schema({
     ref: 'Text',
   }],
   */
+  affectedPage: {
+    type: mongoose.Schema.Types.ObjectId,
+    default: null,
+    ref: 'Page',
+  },
 });
 
 export default mongoose.model('Control', Control);

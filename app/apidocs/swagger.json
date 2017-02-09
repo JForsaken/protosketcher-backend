@@ -1197,7 +1197,6 @@
       "required": [
         "eventTypeId",
         "actionTypeId",
-        "affectedShapes"
       ],
       "properties": {
         "eventTypeId": {
@@ -1214,6 +1213,10 @@
             "type": "string"
           },
           "description": "The affected shapes by the control"
+        },
+        "affectedPage": {
+          "type": "string",
+          "description": "The affected page by the control"
         }
       }
     },
