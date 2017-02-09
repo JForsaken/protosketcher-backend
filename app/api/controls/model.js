@@ -15,16 +15,21 @@ const Control = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'ActionType',
   },
-  affectedShapes: [{
+  affectedShapeIds: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Shape',
   }],
   /*
-  affectedTexts: [{
+  affectedTextIds: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Text',
   }],
   */
+  affectedPageId: {
+    type: mongoose.Schema.Types.ObjectId,
+    default: null,
+    ref: 'Page',
+  },
 });
 
 export default mongoose.model('Control', Control);

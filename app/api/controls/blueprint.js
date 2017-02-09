@@ -3,8 +3,9 @@ export default {
     all: {
       eventTypeId: 'optional',
       actionTypeId: 'optional',
-      affectedShapes: 'optional',
-      // affectedText: 'optional',
+      affectedShapeIds: 'optional',
+      // affectedTextIds: 'optional',
+      affectedPageId: 'optional',
       attributes: 'optional',
       limit: 'optional',
       populate: 'optional',
@@ -12,8 +13,9 @@ export default {
     one: {
       eventTypeId: 'optional',
       actionTypeId: 'optional',
-      affectedShapes: 'optional',
-      // affectedText: 'optional',
+      affectedShapeIds: 'optional',
+      // affectedTextIds: 'optional',
+      affectedPageId: 'optional',
       attributes: 'optional',
       limit: 'optional',
       populate: 'optional',
@@ -23,16 +25,18 @@ export default {
     add: {
       eventTypeId: 'required',
       actionTypeId: 'required',
-      affectedShapes: 'required',
-      // affectedText: 'optional',
+      affectedShapeIds: 'optional',
+      // affectedTextIds: 'optional',
+      affectedPageId: 'optional',
     },
   },
   patch: {
     one: {
-      eventTypeId: 'required',
-      actionTypeId: 'required',
-      affectedShapes: 'required',
-      // affectedText: 'optional',
+      eventTypeId: 'optional',
+      actionTypeId: 'optional',
+      affectedShapeIds: 'optional',
+      // affectedTextIds: 'optional',
+      affectedPageId: 'optional',
     },
   },
 };
