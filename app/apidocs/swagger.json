@@ -1196,7 +1196,7 @@
       "type": "object",
       "required": [
         "eventTypeId",
-        "actionTypeId",
+        "actionTypeId"
       ],
       "properties": {
         "eventTypeId": {
