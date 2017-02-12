@@ -2,6 +2,7 @@ export default {
   get: {
     all: {
       name: 'optional',
+      pageTypeId: 'optional',
       attributes: 'optional',
       limit: 'optional',
       populate: 'optional',
@@ -17,6 +18,7 @@ export default {
   post: {
     add: {
       name: 'required',
+      pageTypeId: 'required',
     },
   },
   patch: {
