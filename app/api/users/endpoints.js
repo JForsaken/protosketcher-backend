@@ -3,6 +3,8 @@ import bcrypt from 'bcrypt-nodejs';
 
 import blueprint from './blueprint';
 import { validator, queryBuilder } from '../helpers';
+
+import Admission from '../admissions/model';
 import User from './model';
 
 /**
@@ -147,11 +149,17 @@ export const authenticate = (req, res) => {
                 expiresIn: '1 day',
               });
 
-              res.status(200).json({
-                success: true,
-                message: 'Sucessfully created token',
-                token,
-              });
+              Admission.findOneAndUpdate({ userId: user._id },
+                                         { userId: user._id, token },
+                                         { upsert: true })
+                .then(() => {
+                  res.status(200).json({
+                    success: true,
+                    message: 'Sucessfully created token',
+                    token,
+                  });
+                })
+                .catch(e => res.status(500).json(e));
             } else {
               res.status(400).json({ success: false, message: 'Authentication failed. Wrong password.' });
             }
