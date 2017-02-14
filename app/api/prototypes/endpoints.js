@@ -1,6 +1,8 @@
 import blueprint from './blueprint';
 import { validator, queryBuilder } from '../helpers';
 import Prototype from './model';
+import Page from '../pages/model';
+import PageType from '../pagetypes/model';
 
 /**
  * List all prototypes
@@ -53,11 +55,27 @@ export const add = (req, res) => {
     .then((validated) => {
       const prototype = new Prototype({ userId: req.decodedToken._id, ...validated });
 
-      prototype.save((err, doc) => {
+      prototype.save((err, savedPrototype) => {
         if (err) {
           res.status(500).json(err);
         } else {
-          res.status(200).json(doc);
+          PageType.findOne({ type: 'page' })
+            .then((pageType) => {
+              const page = new Page({
+                name: 'Page 1',
+                prototypeId: savedPrototype._id,
+                pageTypeId: pageType._id,
+              });
+              page.save((saveErr) => {
+                if (saveErr) {
+                  res.status(500).json(err);
+                } else {
+                  res.status(200).json(savedPrototype);
+                }
+              })
+                .catch(e => res.status(500).json(e));
+            })
+            .catch(e => res.status(500).json(e));
         }
       });
     })
