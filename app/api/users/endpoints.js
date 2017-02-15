@@ -36,7 +36,7 @@ export const findOne = (req, res) => {
         .select(projection)
         .then((user) => {
           if (!user) {
-            res.status(404).end(`Couldn't find user with id ${req.params.id}`);
+            res.status(404).end(`Couldn't find user with id '${req.params.id}'`);
           } else {
             res.status(200).json(user);
           }
@@ -58,7 +58,7 @@ export const findMe = (req, res) => {
         .select(projection)
         .then((user) => {
           if (!user) {
-            res.status(404).end(`Couldn't find user with id ${req.decodedToken._id}`);
+            res.status(404).end(`Couldn't find user with id '${req.decodedToken._id}'`);
           } else {
             res.status(200).json(user);
           }
@@ -121,7 +121,7 @@ export const remove = (req, res) => {
     User.findOne({ _id: req.params.id })
       .then((user) => {
         if (!user) {
-          res.status(404).end(`Couldn't find user with id ${req.params.id}`);
+          res.status(404).end(`Couldn't find user with id '${req.params.id}'`);
         } else {
           user.remove()
             .then(() => {

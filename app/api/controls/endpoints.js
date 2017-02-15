@@ -10,7 +10,7 @@ export const findAll = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
     .then((prototype) => {
       if (!prototype) {
-        res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
+        res.status(404).end(`Couldn't find prototype with id '${req.params.prototypeId}'`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
         res.status(403).end(`User with id '${req.decodedToken._id}' attempted to get controls for shapes with '${prototype.userId}' as owner`);
       } else {
@@ -40,7 +40,7 @@ export const findOne = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
     .then((prototype) => {
       if (!prototype) {
-        res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
+        res.status(404).end(`Couldn't find prototype with id '${req.params.prototypeId}'`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
         res.status(403).end(`User with id '${req.decodedToken._id}' attempted to get control for shape with '${prototype.userId}' as owner`);
       } else {
@@ -53,7 +53,7 @@ export const findOne = (req, res) => {
               .select(projection)
               .then((control) => {
                 if (!control) {
-                  res.status(404).end(`Couldn't find control with id ${req.params.id}`);
+                  res.status(404).end(`Couldn't find control with id '${req.params.id}'`);
                 } else {
                   res.status(200).json(control);
                 }
@@ -73,7 +73,7 @@ export const add = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
     .then((prototype) => {
       if (!prototype) {
-        res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
+        res.status(404).end(`Couldn't find prototype with id '${req.params.prototypeId}'`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
         res.status(403).end(`User with id '${req.decodedToken._id}' attempted to create control for shape with '${prototype.userId}' as owner`);
       } else {
@@ -102,14 +102,14 @@ export const update = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
     .then((prototype) => {
       if (!prototype) {
-        res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
+        res.status(404).end(`Couldn't find prototype with id '${req.params.prototypeId}'`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
         res.status(403).end(`User with id '${req.decodedToken._id}' attempted to update control for shape with '${prototype.userId}' as owner`);
       } else {
         Control.findOne({ _id: req.params.id, shapeId: req.params.shapeId })
           .then((control) => {
             if (!control) {
-              res.status(404).end(`Couldn't find control with id ${req.params.id}`);
+              res.status(404).end(`Couldn't find control with id '${req.params.id}'`);
             } else {
               validator(req.body, blueprint.patch.one)
                 .then((validated) => {
@@ -133,14 +133,14 @@ export const remove = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
     .then((prototype) => {
       if (!prototype) {
-        res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
+        res.status(404).end(`Couldn't find prototype with id '${req.params.prototypeId}'`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
         res.status(403).end(`User with id '${req.decodedToken._id}' attempted to delete control for shape with '${prototype.userId}' as owner`);
       } else {
         Control.findOne({ _id: req.params.id, shapeId: req.params.shapeId })
           .then((control) => {
             if (!control) {
-              res.status(404).end(`Couldn't find control with id ${req.params.id}`);
+              res.status(404).end(`Couldn't find control with id '${req.params.id}'`);
             } else {
               control.remove()
                 .then(() => {
