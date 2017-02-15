@@ -1,7 +1,10 @@
+import { has } from 'ramda';
+
 import blueprint from './blueprint';
 import { validator, queryBuilder } from '../helpers';
 import Text from './model';
 import Prototype from '../prototypes/model';
+import Shape from '../shapes/model';
 
 /**
  * List all texts
@@ -79,15 +82,31 @@ export const add = (req, res) => {
       } else {
         validator(req.body, blueprint.post.add)
           .then((validated) => {
-            const text = new Text({ pageId: req.params.pageId, ...validated });
+            const saveText = () => {
+              const text = new Text({ pageId: req.params.pageId, ...validated });
 
-            text.save((err, doc) => {
-              if (err) {
-                res.status(500).json(err);
-              } else {
-                res.status(200).json(doc);
-              }
-            });
+              text.save((err, doc) => {
+                if (err) {
+                  res.status(500).json(err);
+                } else {
+                  res.status(200).json(doc);
+                }
+              });
+            };
+
+            if (has('shapeId')(validated) && validated.shapeId !== null) {
+              Shape.findOne({ _id: validated.shapeId })
+                .then((shape) => {
+                  if (!shape) {
+                    res.status(404).end(`Couldn't find parent shape type with id '${validated.shapeId}'`);
+                  } else {
+                    saveText();
+                  }
+                })
+                .catch(e => res.status(500).json(e));
+            } else {
+              saveText();
+            }
           })
           .catch(e => res.status(400).json(e));
       }
@@ -113,9 +132,25 @@ export const update = (req, res) => {
             } else {
               validator(req.body, blueprint.patch.one)
                 .then((validated) => {
-                  Text.update({ _id: req.params.id }, { $set: validated })
-                    .then(() => res.status(200).json({ ...validated, _id: req.params.id }))
-                    .catch(e => res.status(500).json(e));
+                  const updateText = () => {
+                    Text.update({ _id: req.params.id }, { $set: validated })
+                      .then(() => res.status(200).json({ ...validated, _id: req.params.id }))
+                      .catch(e => res.status(500).json(e));
+                  };
+
+                  if (has('shapeId')(validated) && validated.shapeId !== null) {
+                    Shape.findOne({ _id: validated.shapeId })
+                      .then((shape) => {
+                        if (!shape) {
+                          res.status(404).end(`Couldn't find parent shape type with id '${validated.shapeId}'`);
+                        } else {
+                          updateText();
+                        }
+                      })
+                      .catch(e => res.status(500).json(e));
+                  } else {
+                    updateText();
+                  }
                 })
                 .catch(e => res.status(400).json(e));
             }
