@@ -99,11 +99,11 @@ export const add = (req, res) => {
               .then((page) => {
                 if (!page) {
                   res.status(404).end(`Couldn't find page with id '${req.params.pageId}'`);
-                } else if (has('shapeId')(validated) && validated.shapeId !== null) {
-                  Shape.findOne({ _id: validated.shapeId })
+                } else if (has('parentId')(validated) && validated.parentId !== null) {
+                  Shape.findOne({ _id: validated.parentId })
                     .then((shape) => {
                       if (!shape) {
-                        res.status(404).end(`Couldn't find parent shape type with id '${validated.shapeId}'`);
+                        res.status(404).end(`Couldn't find parent shape type with id '${validated.parentId}'`);
                       } else {
                         saveText();
                       }
@@ -145,11 +145,11 @@ export const update = (req, res) => {
                       .catch(e => res.status(500).json(e));
                   };
 
-                  if (has('shapeId')(validated) && validated.shapeId !== null) {
-                    Shape.findOne({ _id: validated.shapeId })
+                  if (has('parentId')(validated) && validated.parentId !== null) {
+                    Shape.findOne({ _id: validated.parendId })
                       .then((shape) => {
                         if (!shape) {
-                          res.status(404).end(`Couldn't find parent shape type with id '${validated.shapeId}'`);
+                          res.status(404).end(`Couldn't find parent shape type with id '${validated.parendId}'`);
                         } else {
                           updateText();
                         }
