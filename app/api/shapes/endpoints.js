@@ -3,6 +3,7 @@ import { omit, has } from 'ramda';
 import blueprint from './blueprint';
 import { validator, queryBuilder } from '../helpers';
 import Shape from './model';
+import Page from '../pages/model';
 import ShapeType from '../shapetypes/model';
 import Prototype from '../prototypes/model';
 
@@ -82,47 +83,55 @@ export const add = (req, res) => {
       } else {
         validator(req.body, blueprint.post.add)
           .then((validated) => {
-            ShapeType.findOne({ _id: validated.shapeTypeId })
-              .then((shapeType) => {
-                if (!shapeType) {
-                  res.status(404).end(`Couldn't find shape type with id '${validated.shapeTypeId}'`);
+            Page.find({ _id: req.params.pageId })
+              .then((page) => {
+                if (!page) {
+                  res.status(404).end(`Couldn't find page with id '${req.params.pageId}'`);
                 } else {
-                  const saveShape = () => {
-                    const shape = new Shape({ pageId: req.params.pageId, ...omit(['uuid'], validated) });
-
-                    shape.save((err, doc) => {
-                      if (err) {
-                        res.status(500).json(err);
+                  ShapeType.findOne({ _id: validated.shapeTypeId })
+                    .then((shapeType) => {
+                      if (!shapeType) {
+                        res.status(404).end(`Couldn't find shape type with id '${validated.shapeTypeId}'`);
                       } else {
-                        res.status(200).json({ uuid: validated.uuid, ...doc._doc });
-                      }
-                    });
-                  };
+                        const saveShape = () => {
+                          const shape = new Shape({ pageId: req.params.pageId, ...omit(['uuid'], validated) });
 
-                  if (has('parentId')(validated) && validated.parentId !== null) {
-                    Shape.findOne({ _id: validated.parentId })
-                      .then((parentShape) => {
-                        if (!parentShape) {
-                          res.status(404).end(`Couldn't find parent shape type with id '${validated.parentId}'`);
-                        } else if (has('parentId')(validated)) {
-                          if (shapeType.type !== 'squiggly') {
-                            res.status(400).end("Only 'squiggly' types of shapes can have a parent shape");
-                          } else {
-                            saveShape();
-                          }
+                          shape.save((err, doc) => {
+                            if (err) {
+                              res.status(500).json(err);
+                            } else {
+                              res.status(200).json({ uuid: validated.uuid, ...doc._doc });
+                            }
+                          });
+                        };
+
+                        if (has('parentId')(validated) && validated.parentId !== null) {
+                          Shape.findOne({ _id: validated.parentId })
+                            .then((parentShape) => {
+                              if (!parentShape) {
+                                res.status(404).end(`Couldn't find parent shape type with id '${validated.parentId}'`);
+                              } else if (has('parentId')(validated)) {
+                                if (shapeType.type !== 'squiggly') {
+                                  res.status(400).end("Only 'squiggly' types of shapes can have a parent shape");
+                                } else {
+                                  saveShape();
+                                }
+                              } else {
+                                saveShape();
+                              }
+                            })
+                            .catch(e => res.status(500).json(e));
                         } else {
                           saveShape();
                         }
-                      })
-                      .catch(e => res.status(500).json(e));
-                  } else {
-                    saveShape();
-                  }
+                      }
+                    })
+                    .catch(e => res.status(500).json(e));
                 }
               })
-              .catch(e => res.status(500).json(e));
+              .catch(e => res.status(400).json(e));
           })
-          .catch(e => res.status(400).json(e));
+          .catch(e => res.status(500).json(e));
       }
     })
     .catch(e => res.status(500).json(e));

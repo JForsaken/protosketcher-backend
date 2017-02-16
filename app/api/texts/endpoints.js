@@ -5,6 +5,7 @@ import { validator, queryBuilder } from '../helpers';
 import Text from './model';
 import Prototype from '../prototypes/model';
 import Shape from '../shapes/model';
+import Page from '../pages/model';
 
 /**
  * List all texts
@@ -94,19 +95,25 @@ export const add = (req, res) => {
               });
             };
 
-            if (has('shapeId')(validated) && validated.shapeId !== null) {
-              Shape.findOne({ _id: validated.shapeId })
-                .then((shape) => {
-                  if (!shape) {
-                    res.status(404).end(`Couldn't find parent shape type with id '${validated.shapeId}'`);
-                  } else {
-                    saveText();
-                  }
-                })
-                .catch(e => res.status(500).json(e));
-            } else {
-              saveText();
-            }
+            Page.findOne({ _id: req.params.pageId })
+              .then((page) => {
+                if (!page) {
+                  res.status(404).end(`Couldn't find page with id '${req.params.pageId}'`);
+                } else if (has('shapeId')(validated) && validated.shapeId !== null) {
+                  Shape.findOne({ _id: validated.shapeId })
+                    .then((shape) => {
+                      if (!shape) {
+                        res.status(404).end(`Couldn't find parent shape type with id '${validated.shapeId}'`);
+                      } else {
+                        saveText();
+                      }
+                    })
+                    .catch(e => res.status(500).json(e));
+                } else {
+                  saveText();
+                }
+              })
+              .catch(e => res.status(400).json(e));
           })
           .catch(e => res.status(400).json(e));
       }
