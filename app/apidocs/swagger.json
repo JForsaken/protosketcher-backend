@@ -1437,7 +1437,7 @@
           "type": "integer",
           "description": "Y position for the shape"
         },
-        "shapeId": {
+        "parentId": {
           "type": "string",
           "description": "Shape id of the text if it has a parent shape"
         }
