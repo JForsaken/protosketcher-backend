@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "lint": "eslint app",
-    "dev": "nodemon -w app --exec \"babel-node app --presets es2015,stage-0\"",
+    "dev": "nodemon -w app --exec \"npm run lint && babel-node app --presets es2015,stage-0\"",
     "build": "npm run preflight && babel app -s -D -d dist --presets es2015,stage-0",
     "start": "node dist",
     "preflight": "rm -rf node_modules && yarn install --no-lockfile"
