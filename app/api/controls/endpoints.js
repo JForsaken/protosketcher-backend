@@ -202,8 +202,81 @@ export const update = (req, res) => {
             } else {
               validator(req.body, blueprint.patch.one)
                 .then((validated) => {
-                  Control.update({ _id: req.params.id }, { $set: validated })
-                    .then(() => res.status(200).json({ ...validated, _id: req.params.id }))
+                  Shape.findOne({ _id: req.params.shapeId })
+                    .then((shape) => {
+                      if (!shape) {
+                        res.status(404).end(`Couldn't find shape with id '${req.params.shapeId}'`);
+                      } else {
+                        // get all event types
+                        EventType.find()
+                          .then((eventTypes) => {
+                            // get all action types
+                            ActionType.find()
+                              .then((actionTypes) => {
+                                // get all the pages of this prototype
+                                Page.find({ prototypeId: req.params.prototypeId })
+                                  .then((pages) => {
+                                    // get all the shapes of this page
+                                    Shape.find({ pageId: shape.pageId })
+                                      .then((affectedShapes) => {
+                                        // get all the texts of this page
+                                        Text.find({ pageId: shape.shapeId })
+                                          .then((affectedTexts) => {
+                                            // validate eventTypeId
+                                            if (has('eventTypeId')(validated) &&
+                                                validated.eventTypeId !== null &&
+                                                !any(hasId(validated.eventTypeId), eventTypes)) {
+                                              res.status(404).end(`Couldn't find event type with id '${validated.eventTypeId}'`);
+                                            // validate actionTypeId
+                                            } else if (has('actionTypeId')(validated) &&
+                                                       validated.actionTypeId !== null &&
+                                                       !any(hasId(validated.actionTypeId),
+                                                            actionTypes)) {
+                                              res.status(404).end(`Couldn't find action type with id '${validated.eventTypeId}'`);
+                                            // validate affectedPageId
+                                            } else if (has('affectedPageId')(validated) &&
+                                                       validated.affectedPageId !== null &&
+                                                       !any(hasId(validated.affectedPageId),
+                                                            pages)) {
+                                              res.status(404).end("Couldn't find page for specified affectedPageId");
+                                            // validated affectedShapeIds
+                                            } else if (has('affectedShapeIds')(validated) &&
+                                                       !isEmpty(validated.affectedShapeIds) &&
+                                                       (!allIdsInList(validated.affectedShapeIds,
+                                                                      affectedShapes) ||
+                                                        validated.affectedShapeIds
+                                                        .includes(String(shape._id)))) {
+                                              res.status(404).end(' The affectedShapeIds contain a non-existing shape, or the shape parent to this control');
+                                            // validated affectedTexts
+                                            } else if (has('affectedTextIds')(validated) &&
+                                                       !isEmpty(validated.affectedTextIds) &&
+                                                       (!allIdsInList(validated.affectedTextIds,
+                                                                      affectedTexts)
+                                                       )) {
+                                              res.status(404).end(' The affectedTextIds contain a non-existing text');
+                                            // all validation passed
+                                            } else {
+                                              Control.update(
+                                                { _id: req.params.id },
+                                                { $set: validated })
+                                                .then(() => res.status(200).json({
+                                                  ...validated,
+                                                  _id: req.params.id,
+                                                }))
+                                                .catch(e => res.status(500).json(e));
+                                            }
+                                          })
+                                          .catch(e => res.status(500).json(e));
+                                      })
+                                      .catch(e => res.status(500).json(e));
+                                  })
+                                  .catch(e => res.status(500).json(e));
+                              })
+                              .catch(e => res.status(500).json(e));
+                          })
+                          .catch(e => res.status(500).json(e));
+                      }
+                    })
                     .catch(e => res.status(500).json(e));
                 })
                 .catch(e => res.status(400).json(e));
