@@ -1,4 +1,4 @@
-import { isEmpty, has, any } from 'ramda';
+import { isEmpty, any } from 'ramda';
 
 import blueprint from './blueprint';
 import { validator, queryBuilder } from '../helpers';
@@ -134,19 +134,16 @@ export const add = (req, res) => {
               } else if (!actionType) {
                 res.status(404).end(`Couldn't find action type with id '${validated.actionTypeId}'`);
               // validate affectedPageId
-              } else if (has('affectedPageId')(validated) &&
-                  validated.affectedPageId &&
-                  !any(hasId(validated.affectedPageId), pages)) {
+              } else if (validated.affectedPageId &&
+                         !any(hasId(validated.affectedPageId), pages)) {
                 res.status(404).end("Couldn't find page for specified affectedPageId");
               // validate affectedShapeIds
-              } else if (has('affectedShapeIds')(validated) &&
-                         !isEmpty(validated.affectedShapeIds) &&
+              } else if (!isEmpty(validated.affectedShapeIds) &&
                          (!allIdsInList(validated.affectedShapeIds, affectedShapes) ||
                           validated.affectedShapeIds.includes(String(shape._id)))) {
                 res.status(404).end(' The affectedShapeIds contain a non-existing shape, or the shape parent to this control');
               // validate affectedTexts
-              } else if (has('affectedTextIds')(validated) &&
-                         !isEmpty(validated.affectedTextIds) &&
+              } else if (!isEmpty(validated.affectedTextIds) &&
                          (!allIdsInList(validated.affectedTextIds, affectedTexts))) {
                 res.status(404).end(' The affectedTextIds contain a non-existing text');
               // all validation passed
@@ -198,42 +195,35 @@ export const update = (req, res) => {
           } else {
             // fetch all info needed for validation
             Promise.all([
-              EventType.findOne(),
-              ActionType.findOne(),
+              EventType.findOne({ _id: validated.eventTypeId }),
+              ActionType.findOne({ _id: validated.actionTypeId }),
               Page.find({ prototypeId: req.params.prototypeId }),
               Shape.find({ pageId: shape.pageId }),
               Text.find({ pageId: shape.shapeId }),
             ]).then((info) => {
-              const eventTypes = info[0];
-              const actionTypes = info[1];
+              const eventType = info[0];
+              const actionType = info[1];
               const pages = info[2];
               const affectedShapes = info[3];
               const affectedTexts = info[4];
 
               // validate event type
-              if (has('eventTypeId')(validated) &&
-                  validated.eventTypeId &&
-                  !any(hasId(validated.eventTypeId), eventTypes)) {
+              if (!eventType) {
                 res.status(404).end(`Couldn't find event type with id '${validated.eventTypeId}'`);
               // validate action type
-              } else if (has('actionTypeId')(validated) &&
-                         validated.actionTypeId &&
-                         !any(hasId(validated.actionTypeId), actionTypes)) {
+              } else if (!actionType) {
                 res.status(404).end(`Couldn't find action type with id '${validated.actionTypeId}'`);
               // validate affectedPageId
-              } else if (has('affectedPageId')(validated) &&
-                  validated.affectedPageId &&
-                  !any(hasId(validated.affectedPageId), pages)) {
+              } else if (validated.affectedPageId &&
+                         !any(hasId(validated.affectedPageId), pages)) {
                 res.status(404).end("Couldn't find page for specified affectedPageId");
               // validate affectedShapeIds
-              } else if (has('affectedShapeIds')(validated) &&
-                         !isEmpty(validated.affectedShapeIds) &&
+              } else if (!isEmpty(validated.affectedShapeIds) &&
                          (!allIdsInList(validated.affectedShapeIds, affectedShapes) ||
                           validated.affectedShapeIds.includes(String(shape._id)))) {
                 res.status(404).end(' The affectedShapeIds contain a non-existing shape, or the shape parent to this control');
               // validate affectedTexts
-              } else if (has('affectedTextIds')(validated) &&
-                         !isEmpty(validated.affectedTextIds) &&
+              } else if (!isEmpty(validated.affectedTextIds) &&
                          (!allIdsInList(validated.affectedTextIds, affectedTexts))) {
                 res.status(404).end(' The affectedTextIds contain a non-existing text');
               // all validation passed
