@@ -74,67 +74,56 @@ export const findOne = (req, res) => {
  * Add new shape
  */
 export const add = (req, res) => {
-  Prototype.findOne({ _id: req.params.prototypeId })
-    .then((prototype) => {
-      if (!prototype) {
-        res.status(404).end(`Couldn't find prototype with id '${req.params.prototypeId}'`);
-      } else if (req.decodedToken._id !== String(prototype.userId)) {
-        res.status(403).end(`User with id '${req.decodedToken._id}' attempted to create shape for page with '${prototype.userId}' as owner`);
-      } else {
-        validator(req.body, blueprint.post.add)
-          .then((validated) => {
-            Page.find({ _id: req.params.pageId })
-              .then((page) => {
-                if (!page) {
-                  res.status(404).end(`Couldn't find page with id '${req.params.pageId}'`);
-                } else {
-                  ShapeType.findOne({ _id: validated.shapeTypeId })
-                    .then((shapeType) => {
-                      if (!shapeType) {
-                        res.status(404).end(`Couldn't find shape type with id '${validated.shapeTypeId}'`);
-                      } else {
-                        const saveShape = () => {
-                          const shape = new Shape({ pageId: req.params.pageId, ...omit(['uuid'], validated) });
+  validator(req.body, blueprint.post.add)
+    .then((validated) => {
+      Promise.all([
+        Prototype.findOne({ _id: req.params.prototypeId }),
+        Page.find({ _id: req.params.pageId }),
+        Shape.findOne({ _id: validated.parentId }),
+        ShapeType.findOne({ _id: validated.shapeTypeId }),
+      ])
+        .then((info) => {
+          const prototype = info[0];
+          const page = info[1];
+          const parentShape = info[2];
+          const shapeType = info[3];
 
-                          shape.save((err, doc) => {
-                            if (err) {
-                              res.status(500).json(err);
-                            } else {
-                              res.status(200).json({ uuid: validated.uuid, ...doc._doc });
-                            }
-                          });
-                        };
+          // validate prototype
+          if (!prototype) {
+            res.status(404).end(`Couldn't find prototype with id '${req.params.prototypeId}'`);
+          // validate proper user
+          } else if (req.decodedToken._id !== String(prototype.userId)) {
+            res.status(403).end(`User with id '${req.decodedToken._id}' attempted to create shape for page with '${prototype.userId}' as owner`);
+          // validate page
+          } else if (!page) {
+            res.status(404).end(`Couldn't find page with id '${req.params.pageId}'`);
+          // validate parentId
+          } else if (validated.parentId && !parentShape) {
+            res.status(404).end(`Couldn't find parent shape with id '${validated.parentId}'`);
+          // validate shapeTypeId
+          } else if (!shapeType) {
+            res.status(404).end(`Couldn't find shape type with id '${validated.shapeTypeId}'`);
+          // validate parentId
+          } else if (has('parentId')(validated) &&
+                     validated.parentId &&
+                     shapeType.type === 'squiggly') {
+            res.status(400).end("Only 'squiggly' types of shapes can have a parent shape");
+          // passed all validation
+          } else {
+            const shape = new Shape({ pageId: req.params.pageId, ...omit(['uuid'], validated) });
 
-                        if (has('parentId')(validated) && validated.parentId !== null) {
-                          Shape.findOne({ _id: validated.parentId })
-                            .then((parentShape) => {
-                              if (!parentShape) {
-                                res.status(404).end(`Couldn't find parent shape type with id '${validated.parentId}'`);
-                              } else if (has('parentId')(validated)) {
-                                if (shapeType.type !== 'squiggly') {
-                                  res.status(400).end("Only 'squiggly' types of shapes can have a parent shape");
-                                } else {
-                                  saveShape();
-                                }
-                              } else {
-                                saveShape();
-                              }
-                            })
-                            .catch(e => res.status(500).json(e));
-                        } else {
-                          saveShape();
-                        }
-                      }
-                    })
-                    .catch(e => res.status(500).json(e));
-                }
-              })
-              .catch(e => res.status(400).json(e));
-          })
-          .catch(e => res.status(500).json(e));
-      }
+            shape.save((err, doc) => {
+              if (err) {
+                res.status(500).json(err);
+              } else {
+                res.status(200).json({ uuid: validated.uuid, ...doc._doc });
+              }
+            });
+          }
+        })
+        .catch(e => res.status(500).json(e));
     })
-    .catch(e => res.status(500).json(e));
+    .catch(e => res.status(400).json(e));
 };
 
 /**

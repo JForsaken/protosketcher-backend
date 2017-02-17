@@ -101,8 +101,8 @@ export const add = (req, res) => {
                   res.status(404).end(`Couldn't find page with id '${req.params.pageId}'`);
                 } else if (has('parentId')(validated) && validated.parentId !== null) {
                   Shape.findOne({ _id: validated.parentId })
-                    .then((shape) => {
-                      if (!shape) {
+                    .then((parentShape) => {
+                      if (!parentShape) {
                         res.status(404).end(`Couldn't find parent shape type with id '${validated.parentId}'`);
                       } else {
                         saveText();
@@ -147,8 +147,8 @@ export const update = (req, res) => {
 
                   if (has('parentId')(validated) && validated.parentId !== null) {
                     Shape.findOne({ _id: validated.parendId })
-                      .then((shape) => {
-                        if (!shape) {
+                      .then((parentShape) => {
+                        if (!parentShape) {
                           res.status(404).end(`Couldn't find parent shape type with id '${validated.parendId}'`);
                         } else {
                           updateText();
