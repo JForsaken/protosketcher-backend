@@ -136,16 +136,16 @@ export const add = (req, res) => {
               // validate affectedPageId
               } else if (validated.affectedPageId &&
                          !any(hasId(validated.affectedPageId), pages)) {
-                res.status(404).end("Couldn't find page for specified affectedPageId");
+                res.status(404).end(`Couldn't find page for specified affectedPageId with id '${validated.affectedPageId}'`);
               // validate affectedShapeIds
               } else if (!isEmpty(validated.affectedShapeIds) &&
                          (!allIdsInList(validated.affectedShapeIds, affectedShapes) ||
                           validated.affectedShapeIds.includes(String(shape._id)))) {
-                res.status(404).end(' The affectedShapeIds contain a non-existing shape, or the shape parent to this control');
+                res.status(404).end('The affectedShapeIds contain a non-existing shape, or the shape parent to this control');
               // validate affectedTexts
               } else if (!isEmpty(validated.affectedTextIds) &&
                          (!allIdsInList(validated.affectedTextIds, affectedTexts))) {
-                res.status(404).end(' The affectedTextIds contain a non-existing text');
+                res.status(404).end('The affectedTextIds contain a non-existing text');
               // all validation passed
               } else {
                 const control = new Control({
@@ -216,16 +216,16 @@ export const update = (req, res) => {
               // validate affectedPageId
               } else if (validated.affectedPageId &&
                          !any(hasId(validated.affectedPageId), pages)) {
-                res.status(404).end("Couldn't find page for specified affectedPageId");
+                res.status(404).end(`Couldn't find page for specified affectedPageId with id '${validated.affectedPageId}'`);
               // validate affectedShapeIds
               } else if (!isEmpty(validated.affectedShapeIds) &&
                          (!allIdsInList(validated.affectedShapeIds, affectedShapes) ||
                           validated.affectedShapeIds.includes(String(shape._id)))) {
-                res.status(404).end(' The affectedShapeIds contain a non-existing shape, or the shape parent to this control');
+                res.status(404).end('The affectedShapeIds contain a non-existing shape, or the shape parent to this control');
               // validate affectedTexts
               } else if (!isEmpty(validated.affectedTextIds) &&
                          (!allIdsInList(validated.affectedTextIds, affectedTexts))) {
-                res.status(404).end(' The affectedTextIds contain a non-existing text');
+                res.status(404).end('The affectedTextIds contain a non-existing text');
               // all validation passed
               } else {
                 Control.update({ _id: req.params.id }, { $set: validated })
