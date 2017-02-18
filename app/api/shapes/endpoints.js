@@ -3,6 +3,8 @@ import { omit } from 'ramda';
 import blueprint from './blueprint';
 import { validator, queryBuilder } from '../helpers';
 import Shape from './model';
+import Page from '../pages/model';
+import ShapeType from '../shapetypes/model';
 import Prototype from '../prototypes/model';
 
 /**
@@ -12,7 +14,7 @@ export const findAll = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
     .then((prototype) => {
       if (!prototype) {
-        res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
+        res.status(404).end(`Couldn't find prototype with id '${req.params.prototypeId}'`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
         res.status(403).end(`User with id '${req.decodedToken._id}' attempted to get shapes for page with '${prototype.userId}' as owner`);
       } else {
@@ -42,7 +44,7 @@ export const findOne = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
     .then((prototype) => {
       if (!prototype) {
-        res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
+        res.status(404).end(`Couldn't find prototype with id '${req.params.prototypeId}'`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
         res.status(403).end(`User with id '${req.decodedToken._id}' attempted to get shape for page with '${prototype.userId}' as owner`);
       } else {
@@ -55,7 +57,7 @@ export const findOne = (req, res) => {
               .select(projection)
               .then((shape) => {
                 if (!shape) {
-                  res.status(404).end(`Couldn't find shape with id ${req.params.id}`);
+                  res.status(404).end(`Couldn't find shape with id '${req.params.id}'`);
                 } else {
                   res.status(200).json(shape);
                 }
@@ -72,15 +74,41 @@ export const findOne = (req, res) => {
  * Add new shape
  */
 export const add = (req, res) => {
-  Prototype.findOne({ _id: req.params.prototypeId })
-    .then((prototype) => {
-      if (!prototype) {
-        res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
-      } else if (req.decodedToken._id !== String(prototype.userId)) {
-        res.status(403).end(`User with id '${req.decodedToken._id}' attempted to create shape for page with '${prototype.userId}' as owner`);
-      } else {
-        validator(req.body, blueprint.post.add)
-          .then((validated) => {
+  validator(req.body, blueprint.post.add)
+    .then((validated) => {
+      Promise.all([
+        Prototype.findOne({ _id: req.params.prototypeId }),
+        Page.find({ _id: req.params.pageId }),
+        Shape.findOne({ _id: validated.parentId }),
+        ShapeType.findOne({ _id: validated.shapeTypeId }),
+      ])
+        .then((info) => {
+          const prototype = info[0];
+          const page = info[1];
+          const parentShape = info[2];
+          const shapeType = info[3];
+
+          // validate prototype
+          if (!prototype) {
+            res.status(404).end(`Couldn't find prototype with id '${req.params.prototypeId}'`);
+          // validate proper user
+          } else if (req.decodedToken._id !== String(prototype.userId)) {
+            res.status(403).end(`User with id '${req.decodedToken._id}' attempted to create shape for page with '${prototype.userId}' as owner`);
+          // validate page
+          } else if (!page) {
+            res.status(404).end(`Couldn't find page with id '${req.params.pageId}'`);
+          // validate parentId
+          } else if (validated.parentId && !parentShape) {
+            res.status(404).end(`Couldn't find parent shape with id '${validated.parentId}'`);
+          // validate shapeTypeId
+          } else if (!shapeType) {
+            res.status(404).end(`Couldn't find shape type with id '${validated.shapeTypeId}'`);
+          // validate parentId
+          } else if (validated.parentId &&
+                     shapeType.type !== 'squiggly') {
+            res.status(400).end("Only the shapes with 'squiggly' as their shape type can have a parent shape");
+          // passed all validation
+          } else {
             const shape = new Shape({ pageId: req.params.pageId, ...omit(['uuid'], validated) });
 
             shape.save((err, doc) => {
@@ -90,42 +118,70 @@ export const add = (req, res) => {
                 res.status(200).json({ uuid: validated.uuid, ...doc._doc });
               }
             });
-          })
-          .catch(e => res.status(400).json(e));
-      }
+          }
+        })
+        .catch(e => res.status(500).json(e));
     })
-    .catch(e => res.status(500).json(e));
+    .catch(e => res.status(400).json(e));
 };
 
 /**
  * Update one shape by id
  */
 export const update = (req, res) => {
-  Prototype.findOne({ _id: req.params.prototypeId })
-    .then((prototype) => {
-      if (!prototype) {
-        res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
-      } else if (req.decodedToken._id !== String(prototype.userId)) {
-        res.status(403).end(`User with id '${req.decodedToken._id}' attempted to update shape for page with '${prototype.userId}' as owner`);
-      } else {
-        Shape.findOne({ _id: req.params.id, pageId: req.params.pageId })
-          .then((shape) => {
-            if (!shape) {
-              res.status(404).end(`Couldn't find shape with id ${req.params.id}`);
-            } else {
-              validator(req.body, blueprint.patch.one)
-                .then((validated) => {
-                  Shape.update({ _id: req.params.id }, { $set: validated })
-                    .then(() => res.status(200).json({ ...validated, _id: req.params.id }))
-                    .catch(e => res.status(500).json(e));
-                })
-                .catch(e => res.status(400).json(e));
-            }
-          })
-          .catch(e => res.status(500).json(e));
-      }
+  validator(req.body, blueprint.patch.one)
+    .then((validated) => {
+      Promise.all([
+        Prototype.findOne({ _id: req.params.prototypeId }),
+        Shape.findOne({ _id: req.params.id }),
+        Shape.findOne({ _id: validated.parentId }),
+        ShapeType.findOne({ _id: validated.shapeTypeId }),
+        ShapeType.findOne({ type: 'squiggly' }),
+      ])
+        .then((info) => {
+          const prototype = info[0];
+          const shape = info[1];
+          const parentShape = info[2];
+          const shapeType = info[3];
+          const squigglyShapeType = info[4];
+
+          // validate prototype
+          if (!prototype) {
+            res.status(404).end(`Couldn't find prototype with id '${req.params.prototypeId}'`);
+          // validate proper user
+          } else if (req.decodedToken._id !== String(prototype.userId)) {
+            res.status(403).end(`User with id '${req.decodedToken._id}' attempted to create shape for page with '${prototype.userId}' as owner`);
+          // validate shape
+          } else if (!shape) {
+            res.status(404).end(`Couldn't find shape with id '${req.params.id}'`);
+          // validate parentId
+          } else if (validated.parentId && !parentShape) {
+            res.status(404).end(`Couldn't find parent shape with id '${validated.parentId}'`);
+          // validate shapeTypeId
+          } else if (validated.shapeTypeId && !shapeType) {
+            res.status(404).end(`Couldn't find shape type with id '${validated.shapeTypeId}'`);
+          // validate parentId
+          } else if (validated.parentId &&
+                     validated.parentId === req.params.id) {
+            res.status(400).end('Shape cannot be its own parent shape');
+          // validate parentId with shape type collision
+          } else if ((!validated.shapeTypeId &&
+                      (shape.parentId || validated.parentId) &&
+                      shape.shapeTypeId !== String(squigglyShapeType._id)) ||
+                     (validated.shapeTypeId &&
+                      (validated.parentId || shape.parentId) &&
+                      shapeType.type !== 'squiggly')) {
+            res.status(400).end("Only the shapes with 'squiggly' as their shape type can have a parent shape");
+          // passed all validation
+          } else {
+            Shape.update({ _id: req.params.id }, { $set: validated })
+              .then(() => res.status(200).json({ ...validated, _id: req.params.id }))
+              .catch(e => res.status(500).json(e));
+          }
+        })
+        .catch(e => res.status(500).json(e));
     })
-    .catch(e => res.status(500).json(e));
+    .catch(e => res.status(400).json(e));
 };
 
 /**
@@ -135,14 +191,14 @@ export const remove = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
     .then((prototype) => {
       if (!prototype) {
-        res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
+        res.status(404).end(`Couldn't find prototype with id '${req.params.prototypeId}'`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
         res.status(403).end(`User with id '${req.decodedToken._id}' attempted to delete shape for page with '${prototype.userId}' as owner`);
       } else {
         Shape.findOne({ _id: req.params.id, pageId: req.params.pageId })
           .then((shape) => {
             if (!shape) {
-              res.status(404).end(`Couldn't find shape with id ${req.params.id}`);
+              res.status(404).end(`Couldn't find shape with id '${req.params.id}'`);
             } else {
               shape.remove()
                 .then(() => {

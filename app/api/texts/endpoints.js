@@ -1,7 +1,11 @@
+import { has } from 'ramda';
+
 import blueprint from './blueprint';
 import { validator, queryBuilder } from '../helpers';
 import Text from './model';
 import Prototype from '../prototypes/model';
+import Shape from '../shapes/model';
+import Page from '../pages/model';
 
 /**
  * List all texts
@@ -10,7 +14,7 @@ export const findAll = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
     .then((prototype) => {
       if (!prototype) {
-        res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
+        res.status(404).end(`Couldn't find prototype with id '${req.params.prototypeId}'`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
         res.status(403).end(`User with id '${req.decodedToken._id}' attempted to get texts for page with '${prototype.userId}' as owner`);
       } else {
@@ -40,7 +44,7 @@ export const findOne = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
     .then((prototype) => {
       if (!prototype) {
-        res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
+        res.status(404).end(`Couldn't find prototype with id '${req.params.prototypeId}'`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
         res.status(403).end(`User with id '${req.decodedToken._id}' attempted to get text for page with '${prototype.userId}' as owner`);
       } else {
@@ -53,7 +57,7 @@ export const findOne = (req, res) => {
               .select(projection)
               .then((text) => {
                 if (!text) {
-                  res.status(404).end(`Couldn't find text with id ${req.params.id}`);
+                  res.status(404).end(`Couldn't find text with id '${req.params.id}'`);
                 } else {
                   res.status(200).json(text);
                 }
@@ -73,21 +77,43 @@ export const add = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
     .then((prototype) => {
       if (!prototype) {
-        res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
+        res.status(404).end(`Couldn't find prototype with id '${req.params.prototypeId}'`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
         res.status(403).end(`User with id '${req.decodedToken._id}' attempted to create text for page with '${prototype.userId}' as owner`);
       } else {
         validator(req.body, blueprint.post.add)
           .then((validated) => {
-            const text = new Text({ pageId: req.params.pageId, ...validated });
+            const saveText = () => {
+              const text = new Text({ pageId: req.params.pageId, ...validated });
 
-            text.save((err, doc) => {
-              if (err) {
-                res.status(500).json(err);
-              } else {
-                res.status(200).json(doc);
-              }
-            });
+              text.save((err, doc) => {
+                if (err) {
+                  res.status(500).json(err);
+                } else {
+                  res.status(200).json(doc);
+                }
+              });
+            };
+
+            Page.findOne({ _id: req.params.pageId })
+              .then((page) => {
+                if (!page) {
+                  res.status(404).end(`Couldn't find page with id '${req.params.pageId}'`);
+                } else if (has('parentId')(validated) && validated.parentId !== null) {
+                  Shape.findOne({ _id: validated.parentId })
+                    .then((parentShape) => {
+                      if (!parentShape) {
+                        res.status(404).end(`Couldn't find parent shape type with id '${validated.parentId}'`);
+                      } else {
+                        saveText();
+                      }
+                    })
+                    .catch(e => res.status(500).json(e));
+                } else {
+                  saveText();
+                }
+              })
+              .catch(e => res.status(400).json(e));
           })
           .catch(e => res.status(400).json(e));
       }
@@ -102,20 +128,36 @@ export const update = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
     .then((prototype) => {
       if (!prototype) {
-        res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
+        res.status(404).end(`Couldn't find prototype with id '${req.params.prototypeId}'`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
         res.status(403).end(`User with id '${req.decodedToken._id}' attempted to update text for page with '${prototype.userId}' as owner`);
       } else {
         Text.findOne({ _id: req.params.id, pageId: req.params.pageId })
           .then((text) => {
             if (!text) {
-              res.status(404).end(`Couldn't find text with id ${req.params.id}`);
+              res.status(404).end(`Couldn't find text with id '${req.params.id}'`);
             } else {
               validator(req.body, blueprint.patch.one)
                 .then((validated) => {
-                  Text.update({ _id: req.params.id }, { $set: validated })
-                    .then(() => res.status(200).json({ ...validated, _id: req.params.id }))
-                    .catch(e => res.status(500).json(e));
+                  const updateText = () => {
+                    Text.update({ _id: req.params.id }, { $set: validated })
+                      .then(() => res.status(200).json({ ...validated, _id: req.params.id }))
+                      .catch(e => res.status(500).json(e));
+                  };
+
+                  if (has('parentId')(validated) && validated.parentId !== null) {
+                    Shape.findOne({ _id: validated.parendId })
+                      .then((parentShape) => {
+                        if (!parentShape) {
+                          res.status(404).end(`Couldn't find parent shape type with id '${validated.parendId}'`);
+                        } else {
+                          updateText();
+                        }
+                      })
+                      .catch(e => res.status(500).json(e));
+                  } else {
+                    updateText();
+                  }
                 })
                 .catch(e => res.status(400).json(e));
             }
@@ -133,14 +175,14 @@ export const remove = (req, res) => {
   Prototype.findOne({ _id: req.params.prototypeId })
     .then((prototype) => {
       if (!prototype) {
-        res.status(404).end(`Couldn't find prototype with id ${req.params.prototypeId}`);
+        res.status(404).end(`Couldn't find prototype with id '${req.params.prototypeId}'`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
         res.status(403).end(`User with id '${req.decodedToken._id}' attempted to delete text for page with '${prototype.userId}' as owner`);
       } else {
         Text.findOne({ _id: req.params.id, pageId: req.params.pageId })
           .then((text) => {
             if (!text) {
-              res.status(404).end(`Couldn't find text with id ${req.params.id}`);
+              res.status(404).end(`Couldn't find text with id '${req.params.id}'`);
             } else {
               text.remove()
                 .then(() => {

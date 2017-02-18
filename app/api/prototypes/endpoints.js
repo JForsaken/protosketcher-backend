@@ -37,7 +37,7 @@ export const findOne = (req, res) => {
         .select(projection)
         .then((prototype) => {
           if (!prototype) {
-            res.status(404).end(`Couldn't find prototype with id ${req.params.id}`);
+            res.status(404).end(`Couldn't find prototype with id '${req.params.id}'`);
           } else {
             res.status(200).json(prototype);
           }
@@ -89,7 +89,7 @@ export const update = (req, res) => {
   Prototype.findOne({ _id: req.params.id })
     .then((prototype) => {
       if (!prototype) {
-        res.status(404).end(`Couldn't find prototype with id ${req.params.id}`);
+        res.status(404).end(`Couldn't find prototype with id '${req.params.id}'`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
         res.status(403).end(`User with id '${req.decodedToken._id}' attempted to update prototype with '${prototype.userId}' as owner`);
       } else {
@@ -112,7 +112,7 @@ export const remove = (req, res) => {
   Prototype.findOne({ _id: req.params.id })
     .then((prototype) => {
       if (!prototype) {
-        res.status(404).end(`Couldn't find prototype with id ${req.params.id}`);
+        res.status(404).end(`Couldn't find prototype with id '${req.params.id}'`);
       } else if (req.decodedToken._id !== String(prototype.userId)) {
         res.status(403).end(`User with id '${req.decodedToken._id}' attempted to remove prototype with '${prototype.userId}' as owner`);
       } else {

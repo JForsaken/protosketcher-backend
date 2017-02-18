@@ -11,7 +11,7 @@ const Text = new Schema({
   content: String,
   x: Number,
   y: Number,
-  shapeId: {
+  parentId: {
     type: mongoose.Schema.Types.ObjectId,
     default: null,
     ref: 'Shape',

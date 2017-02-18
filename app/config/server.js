@@ -28,7 +28,7 @@ export default (app) => {
   app.set('port', (process.env.PORT || 5000));
 
   app.listen(app.get('port'), () => {
-    console.log('==>🌎  Node app is listening on port', app.get('port')); // eslint-disable-line no-console
+    console.log('==> 🌎  Node app is listening on port', app.get('port')); // eslint-disable-line no-console
   });
 
   /* Allow CORS */
