@@ -135,8 +135,8 @@ export const update = (req, res) => {
         Prototype.findOne({ _id: req.params.prototypeId }),
         Shape.findOne({ _id: req.params.id }),
         Shape.findOne({ _id: validated.parentId }),
-        ShapeType.find({ _id: validated.shapeTypeId }),
-        ShapeType.find({ type: 'squiggly' }),
+        ShapeType.findOne({ _id: validated.shapeTypeId }),
+        ShapeType.findOne({ type: 'squiggly' }),
       ])
         .then((info) => {
           const prototype = info[0];
@@ -165,10 +165,13 @@ export const update = (req, res) => {
                      validated.parentId === req.params.id) {
             res.status(400).end('Shape cannot be its own parent shape');
           // validate parentId with shape type collision
-          } else if ((validated.parentId || shape.parentId) &&
-                     ((validated.shapeTypeId &&
-                       shapeType.type !== 'squiggly') ||
-                      shape.shapeTypeId === String(squigglyShapeType._id))) {
+          } else if ((!validated.shapeTypeId &&
+                      (shape.parentId || validated.parentId) &&
+                      shape.shapeTypeId !== String(squigglyShapeType._id)) ||
+                     (validated.shapeTypeId &&
+                      (validated.parentId || shape.parentId) &&
+                      shapeType.type !== 'squiggly')) {
+            console.log('here 2');
             res.status(400).end("Only 'squiggly' types of shapes can have a parent shape");
           // passed all validation
           } else {
