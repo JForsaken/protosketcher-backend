@@ -1,5 +1,3 @@
-import { has } from 'ramda';
-
 import blueprint from './blueprint';
 import { validator, queryBuilder } from '../helpers';
 import Text from './model';
@@ -99,7 +97,7 @@ export const add = (req, res) => {
               .then((page) => {
                 if (!page) {
                   res.status(404).end(`Couldn't find page with id '${req.params.pageId}'`);
-                } else if (has('parentId')(validated) && validated.parentId !== null) {
+                } else if (validated.parentId) {
                   Shape.findOne({ _id: validated.parentId })
                     .then((parentShape) => {
                       if (!parentShape) {
@@ -145,7 +143,7 @@ export const update = (req, res) => {
                       .catch(e => res.status(500).json(e));
                   };
 
-                  if (has('parentId')(validated) && validated.parentId !== null) {
+                  if (validated.parendId) {
                     Shape.findOne({ _id: validated.parendId })
                       .then((parentShape) => {
                         if (!parentShape) {
