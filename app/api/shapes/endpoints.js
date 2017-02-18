@@ -171,7 +171,6 @@ export const update = (req, res) => {
                      (validated.shapeTypeId &&
                       (validated.parentId || shape.parentId) &&
                       shapeType.type !== 'squiggly')) {
-            console.log('here 2');
             res.status(400).end("Only 'squiggly' types of shapes can have a parent shape");
           // passed all validation
           } else {
