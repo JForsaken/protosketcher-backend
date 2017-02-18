@@ -106,7 +106,7 @@ export const add = (req, res) => {
           // validate parentId
           } else if (validated.parentId &&
                      shapeType.type !== 'squiggly') {
-            res.status(400).end("Only 'squiggly' types of shapes can have a parent shape");
+            res.status(400).end("Only the shapes with 'squiggly' as their shape type can have a parent shape");
           // passed all validation
           } else {
             const shape = new Shape({ pageId: req.params.pageId, ...omit(['uuid'], validated) });
@@ -171,7 +171,7 @@ export const update = (req, res) => {
                      (validated.shapeTypeId &&
                       (validated.parentId || shape.parentId) &&
                       shapeType.type !== 'squiggly')) {
-            res.status(400).end("Only 'squiggly' types of shapes can have a parent shape");
+            res.status(400).end("Only the shapes with 'squiggly' as their shape type can have a parent shape");
           // passed all validation
           } else {
             Shape.update({ _id: req.params.id }, { $set: validated })
