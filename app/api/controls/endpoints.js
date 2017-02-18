@@ -128,10 +128,10 @@ export const add = (req, res) => {
               const affectedTexts = info[4];
 
               // validate event type
-              if (!eventType) {
+              if (validated.eventTypeId && !eventType) {
                 res.status(404).end(`Couldn't find event type with id '${validated.eventTypeId}'`);
               // validate action type
-              } else if (!actionType) {
+              } else if (validated.actionTypeId && !actionType) {
                 res.status(404).end(`Couldn't find action type with id '${validated.actionTypeId}'`);
               // validate affectedPageId
               } else if (validated.affectedPageId &&
@@ -208,10 +208,10 @@ export const update = (req, res) => {
               const affectedTexts = info[4];
 
               // validate event type
-              if (!eventType) {
+              if (validated.eventTypeId && !eventType) {
                 res.status(404).end(`Couldn't find event type with id '${validated.eventTypeId}'`);
               // validate action type
-              } else if (!actionType) {
+              } else if (validated.actionTypeId && !actionType) {
                 res.status(404).end(`Couldn't find action type with id '${validated.actionTypeId}'`);
               // validate affectedPageId
               } else if (validated.affectedPageId &&

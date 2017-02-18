@@ -105,7 +105,7 @@ export const add = (req, res) => {
             res.status(404).end(`Couldn't find shape type with id '${validated.shapeTypeId}'`);
           // validate parentId
           } else if (validated.parentId &&
-                     shapeType.type === 'squiggly') {
+                     shapeType.type !== 'squiggly') {
             res.status(400).end("Only 'squiggly' types of shapes can have a parent shape");
           // passed all validation
           } else {
@@ -135,13 +135,15 @@ export const update = (req, res) => {
         Prototype.findOne({ _id: req.params.prototypeId }),
         Shape.findOne({ _id: req.params.id }),
         Shape.findOne({ _id: validated.parentId }),
-        ShapeType.findOne({ _id: validated.shapeTypeId }),
+        ShapeType.find({ _id: validated.shapeTypeId }),
+        ShapeType.find({ type: 'squiggly' }),
       ])
         .then((info) => {
           const prototype = info[0];
           const shape = info[1];
           const parentShape = info[2];
           const shapeType = info[3];
+          const squigglyShapeType = info[4];
 
           // validate prototype
           if (!prototype) {
@@ -156,17 +158,17 @@ export const update = (req, res) => {
           } else if (validated.parentId && !parentShape) {
             res.status(404).end(`Couldn't find parent shape with id '${validated.parentId}'`);
           // validate shapeTypeId
-          } else if (!shapeType) {
+          } else if (validated.shapeTypeId && !shapeType) {
             res.status(404).end(`Couldn't find shape type with id '${validated.shapeTypeId}'`);
           // validate parentId
           } else if (validated.parentId &&
                      validated.parentId === req.params.id) {
             res.status(400).end('Shape cannot be its own parent shape');
           // validate parentId with shape type collision
-          } else if ((validated.parentId &&
-                      shapeType.type === 'squiggly') ||
-                     (shape.shapeType === String(shapeType._id) &&
-                      validated.parentId)) {
+          } else if ((validated.parentId || shape.parentId) &&
+                     ((validated.shapeTypeId &&
+                       shapeType.type !== 'squiggly') ||
+                      shape.shapeTypeId === String(squigglyShapeType._id))) {
             res.status(400).end("Only 'squiggly' types of shapes can have a parent shape");
           // passed all validation
           } else {
