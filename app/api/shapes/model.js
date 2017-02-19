@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 import Control from '../controls/model';
+import Text from '../texts/model';
 
 const Schema = mongoose.Schema;
 
@@ -31,20 +32,31 @@ Shape.post('remove', (doc) => {
 
   Promise.all([
     Model.find({ parentId: doc._id }),
+    Text.find({ parentId: doc._id }),
     Control.find({ affectedShapeIds: doc._id }),
   ])
     .then((values) => {
       // the shapes having the deleted shape as parent
       const shapes = values[0];
+      // the texts having the deleted shape as parent
+      const texts = values[1];
       // the controls having the deleted shape as an affected shape
-      const controls = values[1];
+      const controls = values[2];
 
-      // set their parentId as null since the parent is now deleted
+      // set the shapes' parentId as null since the parent is now deleted
       shapes.forEach((o) => {
         const shape = o;
         shape.parentId = null;
 
         shape.save();
+      });
+
+      // set the texts' parentId as null since the parent is now deleted
+      texts.forEach((o) => {
+        const text = o;
+        text.parentId = null;
+
+        text.save();
       });
 
       // filter out the deleted shape of the affectedShapeIds
