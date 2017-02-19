@@ -29,14 +29,31 @@ Shape.post('remove', (doc) => {
 
   Control.remove({ shapeId: doc._id }).exec();
 
-  // find all  the shapes having the deleted shape as parent
-  Model.find({ parentId: doc._id })
-    .then((shapes) => {
+  Promise.all([
+    Model.find({ parentId: doc._id }),
+    Control.find({ affectedShapeIds: doc._id }),
+  ])
+    .then((values) => {
+      // the shapes having the deleted shape as parent
+      const shapes = values[0];
+      // the controls having the deleted shape as an affected shape
+      const controls = values[1];
+
       // set their parentId as null since the parent is now deleted
       shapes.forEach((o) => {
         const shape = o;
         shape.parentId = null;
+
         shape.save();
+      });
+
+      // filter out the deleted shape of the affectedShapeIds
+      controls.forEach((o) => {
+        const control = o;
+        control.affectedShapeIds = control.affectedShapeIds
+          .filter(a => String(a) !== String(doc._id));
+
+        control.save();
       });
     });
 });
