@@ -25,7 +25,20 @@ const Shape = new Schema({
 });
 
 Shape.post('remove', (doc) => {
+  const Model = mongoose.model('Shape', Shape);
+
   Control.remove({ shapeId: doc._id }).exec();
+
+  // find all  the shapes having the deleted shape as parent
+  Model.find({ parentId: doc._id })
+    .then((shapes) => {
+      // set their parentId as null since the parent is now deleted
+      shapes.forEach((o) => {
+        const shape = o;
+        shape.parentId = null;
+        shape.save();
+      });
+    });
 });
 
 export default mongoose.model('Shape', Shape);
