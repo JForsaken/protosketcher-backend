@@ -10,11 +10,11 @@ import EventType from '../eventtypes/model';
 import Page from '../pages/model';
 import Text from '../texts/model';
 
-const hasId = (id, inverse) => o => (inverse ? String(o._id) !== id : String(o._id) === id);
+const hasId = id => o => String(o._id) === id;
 const allIdsInList = (haystack, list) => {
   let allInList = true;
   haystack.forEach((o) => {
-    if (any(hasId(o, true), list)) {
+    if (!any(hasId(o), list)) {
       allInList = false;
       return false;
     }
@@ -143,7 +143,8 @@ export const add = (req, res) => {
                           validated.affectedShapeIds.includes(String(shape._id)))) {
                 res.status(404).end('The affectedShapeIds contain a non-existing shape, or the shape parent to this control');
               // validate affectedTexts
-              } else if (!isEmpty(validated.affectedTextIds) &&
+              } else if (validated.affectedTextIds &&
+                         !isEmpty(validated.affectedTextIds) &&
                          (!allIdsInList(validated.affectedTextIds, affectedTexts))) {
                 res.status(404).end('The affectedTextIds contain a non-existing text');
               // all validation passed
@@ -172,7 +173,7 @@ export const add = (req, res) => {
  * Update one control by id
  */
 export const update = (req, res) => {
-  validator(req.body, blueprint.post.add)
+  validator(req.body, blueprint.patch.one)
     .then((validated) => {
       // fetch requested prototype and shape in url
       Promise.all([
@@ -218,12 +219,14 @@ export const update = (req, res) => {
                          !any(hasId(validated.affectedPageId), pages)) {
                 res.status(404).end(`Couldn't find page for specified affectedPageId with id '${validated.affectedPageId}'`);
               // validate affectedShapeIds
-              } else if (!isEmpty(validated.affectedShapeIds) &&
+              } else if (validated.affectedShapeIds &&
+                         !isEmpty(validated.affectedShapeIds) &&
                          (!allIdsInList(validated.affectedShapeIds, affectedShapes) ||
                           validated.affectedShapeIds.includes(String(shape._id)))) {
                 res.status(404).end('The affectedShapeIds contain a non-existing shape, or the shape parent to this control');
               // validate affectedTexts
-              } else if (!isEmpty(validated.affectedTextIds) &&
+              } else if (validated.affectedTextIds &&
+                         !isEmpty(validated.affectedTextIds) &&
                          (!allIdsInList(validated.affectedTextIds, affectedTexts))) {
                 res.status(404).end('The affectedTextIds contain a non-existing text');
               // all validation passed

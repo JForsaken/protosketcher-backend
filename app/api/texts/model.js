@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+import Control from '../controls/model';
+
 const Schema = mongoose.Schema;
 
 const Text = new Schema({
@@ -16,6 +18,20 @@ const Text = new Schema({
     default: null,
     ref: 'Shape',
   },
+});
+
+Text.post('remove', (doc) => {
+  Control.find({ affectedTextIds: doc._id })
+    .then((controls) => {
+      // filter out the deleted text of the affectedTextIds
+      controls.forEach((o) => {
+        const control = o;
+        control.affectedTextIds = control.affectedTextIds
+          .filter(a => String(a) !== String(doc._id));
+
+        control.save();
+      });
+    });
 });
 
 export default mongoose.model('Text', Text);
