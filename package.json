@@ -21,7 +21,7 @@
     "preflight": "rm -rf node_modules && npm install"
   },
   "engines": {
-    "node": ">=6"
+    "node": "6.9.1"
   },
   "pre-commit": [
     "lint"
