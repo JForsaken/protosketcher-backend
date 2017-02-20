@@ -4,7 +4,6 @@
   "description": "Photosketcher app RESTful API.",
   "author": "Justin D'Errico, Jonathan Rainville, Francois Lauzier, Gabriel Latendresse",
   "homepage": "https://github.com/jforsaken/photosketcher-backend.git",
-  "main": "app/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/jforsaken/photosketcher-backend.git"
