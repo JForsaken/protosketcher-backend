@@ -18,7 +18,7 @@
     "dev": "export NODE_ENV=dev && nodemon -w app --exec \"npm run lint && babel-node app --presets es2015,stage-0\"",
     "build": "npm run preflight && babel app -s -D -d dist --presets es2015,stage-0",
     "start": "export NODE_ENV=prod && npm run build && node dist",
-    "preflight": "rm -rf node_modules && yarn install --no-lockfile"
+    "preflight": "rm -rf node_modules && npm install"
   },
   "engines": {
     "node": ">=6"
