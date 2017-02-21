@@ -2,9 +2,9 @@
   "swagger": "2.0",
   "info": {
     "version": "1.0.0",
-    "title": "API"
+    "title": "Protosketcher API"
   },
-  "host": "localhost:5000",
+  "host": "",
   "basePath": "/api/v1",
   "schemes": [
     "http"
