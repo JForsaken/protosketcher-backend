@@ -24,7 +24,7 @@ export default (app) => {
   mongoose.Promise = global.Promise;
   mongoose.connect(process.env.NODE_ENV === 'prod' ?
                    process.env.MONGODB_URI :
-                   process.env.DEV_MONGODB);
+                   process.env.MONGODB_DEV);
 
   // set the listening port to 5000
   app.set('port', (process.env.PORT || 5000));
