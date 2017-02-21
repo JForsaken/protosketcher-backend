@@ -28,6 +28,7 @@ export default {
       affectedShapeIds: 'optional',
       affectedTextIds: 'optional',
       affectedPageId: 'optional',
+      uuid: 'required',
     },
   },
   patch: {

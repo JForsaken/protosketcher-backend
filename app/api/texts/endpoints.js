@@ -1,3 +1,5 @@
+import { omit } from 'ramda';
+
 import blueprint from './blueprint';
 import { validator, queryBuilder } from '../helpers';
 import Text from './model';
@@ -82,13 +84,13 @@ export const add = (req, res) => {
         validator(req.body, blueprint.post.add)
           .then((validated) => {
             const saveText = () => {
-              const text = new Text({ pageId: req.params.pageId, ...validated });
+              const text = new Text({ pageId: req.params.pageId, ...omit(['uuid'], validated) });
 
               text.save((err, doc) => {
                 if (err) {
                   res.status(500).json(err);
                 } else {
-                  res.status(200).json(doc);
+                  res.status(200).json({ uuid: validated.uuid, ...doc._doc });
                 }
               });
             };

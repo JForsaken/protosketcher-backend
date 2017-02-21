@@ -1,4 +1,4 @@
-import { isEmpty, any } from 'ramda';
+import { isEmpty, any, omit } from 'ramda';
 
 import blueprint from './blueprint';
 import { validator, queryBuilder } from '../helpers';
@@ -151,14 +151,14 @@ export const add = (req, res) => {
               } else {
                 const control = new Control({
                   shapeId: req.params.shapeId,
-                  ...validated,
+                  ...omit(['uuid'], validated),
                 });
 
                 control.save((err, doc) => {
                   if (err) {
                     res.status(500).json(err);
                   } else {
-                    res.status(200).json(doc);
+                    res.status(200).json({ uuid: validated.uuid, ...doc._doc });
                   }
                 });
               }

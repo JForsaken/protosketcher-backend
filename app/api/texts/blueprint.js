@@ -28,6 +28,7 @@ export default {
       x: 'required',
       y: 'required',
       parentId: 'optional',
+      uuid: 'required',
     },
   },
   patch: {
