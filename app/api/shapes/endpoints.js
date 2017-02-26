@@ -1,8 +1,9 @@
-import { omit } from 'ramda';
+import { isEmpty, omit } from 'ramda';
 
 import blueprint from './blueprint';
 import { validator, queryBuilder } from '../helpers';
 import Shape from './model';
+import Control from '../controls/model';
 import Page from '../pages/model';
 import ShapeType from '../shapetypes/model';
 import Prototype from '../prototypes/model';
@@ -27,7 +28,26 @@ export const findAll = (req, res) => {
               .populate(populate)
               .select(projection)
               .then((shapes) => {
-                res.status(200).json(shapes);
+                if (isEmpty(shapes)) {
+                  res.status(200).json(shapes);
+                } else {
+                  const shapeIds = shapes.map(o => o._id);
+                  console.log('shapeIds', shapeIds);
+
+                  // find all controls for the found shapes
+                  Control.find({ shapeId: { $in: shapeIds } })
+                    .then((controls) => {
+                      // associate each controls to their parent shape
+                      shapes.forEach((s) => {
+                        const curShape = s._doc;
+                        curShape.controls = controls
+                          .filter(c => String(s._id) === String(c.shapeId));
+                      });
+
+                      res.status(200).json(shapes);
+                    })
+                    .catch(e => res.status(500).json(e));
+                }
               })
               .catch(e => res.status(500).json(e));
           })

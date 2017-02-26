@@ -138,12 +138,14 @@ export const add = (req, res) => {
                          !any(hasId(validated.affectedPageId), pages)) {
                 res.status(404).end(`Couldn't find page for specified affectedPageId with id '${validated.affectedPageId}'`);
               // validate affectedShapeIds
-              } else if (!isEmpty(validated.affectedShapeIds) &&
+              } else if (validated.affectedShapeIds &&
+                         !isEmpty(validated.affectedShapeIds) &&
                          (!allIdsInList(validated.affectedShapeIds, affectedShapes) ||
                           validated.affectedShapeIds.includes(String(shape._id)))) {
                 res.status(404).end('The affectedShapeIds contain a non-existing shape, or the shape parent to this control');
               // validate affectedTexts
               } else if (validated.affectedTextIds &&
+                         !isEmpty(affectedTexts) &&
                          !isEmpty(validated.affectedTextIds) &&
                          (!allIdsInList(validated.affectedTextIds, affectedTexts))) {
                 res.status(404).end('The affectedTextIds contain a non-existing text');
@@ -162,9 +164,11 @@ export const add = (req, res) => {
                   }
                 });
               }
-            }).catch(reason => res.status(500).end(reason));
+            })
+              .catch(reason => res.status(500).json(reason));
           }
-        }).catch(reason => res.status(500).end(reason));
+        })
+        .catch(reason => res.status(500).json(reason));
     })
     .catch(e => res.status(400).json(e));
 };
@@ -235,9 +239,9 @@ export const update = (req, res) => {
                   .then(() => res.status(200).json({ ...validated, _id: req.params.id }))
                   .catch(e => res.status(500).json(e));
               }
-            }).catch(reason => res.status(500).end(reason));
+            }).catch(reason => res.status(500).json(reason));
           }
-        }).catch(reason => res.status(500).end(reason));
+        }).catch(reason => res.status(500).json(reason));
     })
     .catch(e => res.status(400).json(e));
 };
