@@ -32,7 +32,6 @@ export const findAll = (req, res) => {
                   res.status(200).json(shapes);
                 } else {
                   const shapeIds = shapes.map(o => o._id);
-                  console.log('shapeIds', shapeIds);
 
                   // find all controls for the found shapes
                   Control.find({ shapeId: { $in: shapeIds } })
