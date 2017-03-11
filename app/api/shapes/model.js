@@ -23,6 +23,10 @@ const Shape = new Schema({
   color: String,
   x: Number,
   y: Number,
+  visible: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 Shape.post('remove', (doc) => {
