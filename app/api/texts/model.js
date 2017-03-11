@@ -18,6 +18,10 @@ const Text = new Schema({
     default: null,
     ref: 'Shape',
   },
+  visible: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 Text.post('remove', (doc) => {
