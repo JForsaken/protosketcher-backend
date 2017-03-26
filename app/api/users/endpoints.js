@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt-nodejs';
 
 import blueprint from './blueprint';
-import { validator, queryBuilder } from '../helpers';
+import { validator, queryBuilder, getPasswordErrors, isEmail } from '../helpers';
 
 import Admission from '../admissions/model';
 import User from './model';
@@ -74,18 +74,33 @@ export const findMe = (req, res) => {
 export const add = (req, res) => {
   validator(req.body, blueprint.post.add)
     .then((validated) => {
-      bcrypt.hash(validated.password, null, null, (hashError, hash) => {
-        const updatedUser = { ...validated, password: hash };
-        const user = new User(updatedUser);
+      User.findOne({ email: validated.email })
+        .then((knownUser) => {
+          const passwordErrors = getPasswordErrors(validated.password);
+          const emailErrors = isEmail(validated.email);
 
-        user.save((err) => {
-          if (err) {
-            res.status(500).json(err);
+          if (knownUser) {
+            res.status(409).end(`A user exists with ${validated.email} as email.`);
+          } else if (passwordErrors) {
+            res.status(406).end(`Password ${passwordErrors}.`);
+          } else if (emailErrors) {
+            res.status(400).end(emailErrors);
           } else {
-            res.status(200).json(updatedUser);
+            bcrypt.hash(validated.password, null, null, (hashError, hash) => {
+              const updatedUser = { ...validated, password: hash };
+              const user = new User(updatedUser);
+
+              user.save((err) => {
+                if (err) {
+                  res.status(500).json(err);
+                } else {
+                  res.status(200).json(updatedUser);
+                }
+              });
+            });
           }
-        });
-      });
+        })
+        .catch(e => res.status(500).json(e));
     })
     .catch(e => res.status(400).json(e));
 };
@@ -142,28 +157,32 @@ export const authenticate = (req, res) => {
     .then((validated) => {
       User.findOne({ email: validated.email })
         .then((user) => {
-          // check if password matches
-          bcrypt.compare(validated.password, user.password, (err, matches) => {
-            if (matches) {
-              const token = jwt.sign(user, process.env.DB_SECRET, {
-                expiresIn: '1 day',
-              });
+          if (!user) {
+            res.status(404).end(`Couldn't find user with id '${req.params.id}'`);
+          } else {
+            // check if password matches
+            bcrypt.compare(validated.password, user.password, (err, matches) => {
+              if (matches) {
+                const token = jwt.sign(user, process.env.DB_SECRET, {
+                  expiresIn: '1 day',
+                });
 
-              Admission.findOneAndUpdate({ userId: user._id },
-                                         { userId: user._id, token },
-                                         { upsert: true })
-                .then(() => {
-                  res.status(200).json({
-                    success: true,
-                    message: 'Sucessfully created token',
-                    token,
-                  });
-                })
-                .catch(e => res.status(500).json(e));
-            } else {
-              res.status(400).json({ success: false, message: 'Authentication failed. Wrong password.' });
-            }
-          });
+                Admission.findOneAndUpdate({ userId: user._id },
+                                           { userId: user._id, token },
+                                           { upsert: true })
+                  .then(() => {
+                    res.status(200).json({
+                      success: true,
+                      message: 'Sucessfully created token',
+                      token,
+                    });
+                  })
+                  .catch(e => res.status(500).json(e));
+              } else {
+                res.status(400).json({ success: false, message: 'Authentication failed. Wrong password.' });
+              }
+            });
+          }
         })
         .catch(e => res.status(404).json(e));
     })
