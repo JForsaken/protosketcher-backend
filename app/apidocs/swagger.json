@@ -1367,13 +1367,10 @@
         "path",
         "color",
         "x",
-        "y"
+        "y",
+        "uuid"
       ],
       "properties": {
-        "uuid": {
-          "type": "string",
-          "description": "Temporary UUID of the created shape"
-        },
         "shapeTypeId": {
           "type": "string",
           "description": "Type id of the shape"
@@ -1397,6 +1394,10 @@
         "y": {
           "type": "integer",
           "description": "Y position for the shape"
+        },
+        "uuid": {
+          "type": "string",
+          "description": "The uuid of the newly created shape"
         }
       }
     },
@@ -1418,7 +1419,8 @@
         "fontSize",
         "content",
         "x",
-        "y"
+        "y",
+        "uuid"
       ],
       "properties": {
         "fontSize": {
@@ -1440,6 +1442,10 @@
         "parentId": {
           "type": "string",
           "description": "Shape id of the text if it has a parent shape"
+        },
+        "uuid": {
+          "type": "string",
+          "description": "The uuid of the newly created text"
         }
       }
     },
@@ -1447,7 +1453,8 @@
       "type": "object",
       "required": [
         "eventTypeId",
-        "actionTypeId"
+        "actionTypeId",
+        "uuid"
       ],
       "properties": {
         "eventTypeId": {
@@ -1468,6 +1475,10 @@
         "affectedPageId": {
           "type": "string",
           "description": "The affected page by the control"
+        },
+        "uuid": {
+          "type": "string",
+          "description": "The uuid of the newly created control"
         }
       }
     },
